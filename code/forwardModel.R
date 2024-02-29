@@ -1,6 +1,6 @@
-
-fm = function(# Parameters ----
-              v = 85 * 1e3^2,  # stomatal density in 1/m^2
+# Function ----
+fm = function(## Parameters
+              v = 85 * 1e3^2,  # stomatal density in 1 / m^2
               d_st = 33.8 / 1e6,  #stomatal depth in m
               D_co2 = 1.55e-5,  # diffusivity of CO2, T-dependent in m^2/sec
               a_st = 12.3 / 1e6^2, # stomatal pore area in m^2
@@ -14,16 +14,17 @@ fm = function(# Parameters ----
               q = 7.3 / 1e6,  # Carboxylation limit in mol / m^2 / s
               R_d = 0.16 / 1e6,  # Mitochondrial respiration rate in mol / m^2 / s
               Gam = 2408 / 1e6,  # Compensation pt in mol / m^3
-              C_a = 2.68e25 / 6.023e23 * 350e-6  # Atmospheric CO2 in mol / m^3
+              CO2_a = 350  # Atmospheric CO2 ppm
               ){
   # Intermediates ----
-  p_sat = exp(-(40700 / 8.3145) * (1 / (273 + t_air) - 1 / 373))  # saturation vapor pressure
-  w_sat = 2.68e25 / 6.023e23 * p_sat  # saturation mol / m^3, assuming ideal gas and STP
+  p_sat = 6.1094 * exp(17.625 * t_air / (t_air + 243.04)) * 100  # saturation vapor pressure in hPa 
+  w_sat = p_sat / (8.314 * (t_air + 273.15))  # saturation mol / m^3, ideal gas law
   w_a = w_sat * rh_air
+  C_a = 101325 / (8.314 * (t_air + 273.15)) * CO2_a * 1e-6  # Atmospheric CO2 in mol / m^3, ideal gas law
   
   # Equations ----
   ## stomatal conductance is a function of leaf/stomatal geometry (Konrad eq 4)
-  g = v * d_st * D_co2 / (d_st + v * a_st * (d_bl + d_as * tau_as^2 / n_as))
+  g = v * a_st * D_co2 / (d_st + v * a_st * (d_bl + d_as * tau_as^2 / n_as))
   
   ## transpiration is a function of g and env
   E = 1.6 * g * (w_sat - w_a) 
@@ -43,4 +44,4 @@ fm = function(# Parameters ----
   return(data.frame(g, E, C_i, A, D13C))
 }
 
-fm(rh_air = c(0.6, 0.7, 0.8))
+fm(CO2_a = c(250, 350, 500))
