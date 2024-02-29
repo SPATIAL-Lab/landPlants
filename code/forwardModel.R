@@ -24,17 +24,18 @@ fm = function(## Parameters
   
   # Equations ----
   ## stomatal conductance is a function of leaf/stomatal geometry (Konrad eq 4)
+  ### units m / s
   g = v * a_st * D_co2 / (d_st + v * a_st * (d_bl + d_as * tau_as^2 / n_as))
   
-  ## transpiration is a function of g and env
+  ## transpiration is a function of g and env, units mol / m^2 / s
   E = 1.6 * g * (w_sat - w_a) 
   
-  ## Ci from Konrad eq 6 
+  ## Ci from Konrad eq 6, units mol / m^3
   C_i = 1 / (2 * g) * (g * (C_a - K) - (q - R_d) + 
                          sqrt((g * (C_a - K) - (q - R_d))^2 + 
                                 4 * g * (g * K * C_a + q * Gam + K * R_d)))
   
-  ## A from Ci and g
+  ## A from Ci and g, units mol / m^2 / s
   A = g * (C_a - C_i)
   
   ## D13C from Ci and Ca
@@ -43,5 +44,3 @@ fm = function(## Parameters
   # Return ----
   return(data.frame(g, E, C_i, A, D13C))
 }
-
-fm(CO2_a = c(250, 350, 500))
