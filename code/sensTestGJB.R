@@ -29,7 +29,8 @@ library(R2jags)
 
 ## Baseline scenario
 data = list("v.obs" = 100e6, "v.sd" = 1e6, "D13C.obs" = 16, "D13C.sd" = 0.3,
-            "a_st.obs" = 12.3e-12, "a_st.sd" = 0.1e-12)
+            "a_st.obs" = 12.3e-12, "a_st.sd" = 0.1e-12, "l_leaf.obs" = 84e-3,
+            "l_leaf.sd" = 1e-3)
 inits = NULL
 parms = c("v", "D13C", "CO2_a", "q", "rh_air", "a_st", "d_st")
 
@@ -37,16 +38,26 @@ p1 = jags(data, inits, parms, "code/JAGSmodel.R")
 
 ## Lower stomatal density
 data = list("v.obs" = 50e6, "v.sd" = 1e6, "D13C.obs" = 16, "D13C.sd" = 0.3,
-            "a_st.obs" = 12.3e-12, "a_st.sd" = 0.1e-12)
+            "a_st.obs" = 12.3e-12, "a_st.sd" = 0.1e-12, "l_leaf.obs" = 84e-3,
+            "l_leaf.sd" = 1e-3)
 p2 = jags(data, inits, parms, "code/JAGSmodel.R")
 
 ## Higher D13C
 data = list("v.obs" = 100e6, "v.sd" = 1e6, "D13C.obs" = 19, "D13C.sd" = 0.3,
-            "a_st.obs" = 12.3e-12, "a_st.sd" = 0.1e-12)
+            "a_st.obs" = 12.3e-12, "a_st.sd" = 0.1e-12, "l_leaf.obs" = 84e-3,
+            "l_leaf.sd" = 1e-3)
 p3 = jags(data, inits, parms, "code/JAGSmodel.R")
+
+## Lower D13C
+data = list("v.obs" = 100e6, "v.sd" = 1e6, "D13C.obs" = 13, "D13C.sd" = 0.3,
+            "a_st.obs" = 12.3e-12, "a_st.sd" = 0.1e-12, "l_leaf.obs" = 84e-3,
+            "l_leaf.sd" = 1e-3)
+p4 = jags(data, inits, parms, "code/JAGSmodel.R")
 
 ## Compare posterior means
 p = rbind("Baseline" = p1$BUGSoutput$summary[,"mean"],
           "Low v" = p2$BUGSoutput$summary[,"mean"],
-          "High D13C" = p3$BUGSoutput$summary[,"mean"])
+          "High D13C" = p3$BUGSoutput$summary[,"mean"],
+          "Low D13C" = p4$BUGSoutput$summary[,"mean"])
 p
+

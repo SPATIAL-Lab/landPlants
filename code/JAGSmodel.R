@@ -4,6 +4,9 @@ model {
   D13C.obs ~ dnorm(D13C, 1 / D13C.sd^2)
   
   # Equations ----
+  ## boundary layer thickness ----
+  d_bl = 4e-3 * sqrt(l_leaf / v_wind)
+  
   ## stomatal conductance is a function of leaf/stomatal geometry (Konrad eq 4)
   ### units m / s
   g = v * a_st * D_co2 / (d_st + v * a_st * (d_bl + d_as * tau_as^2 / n_as))
@@ -33,7 +36,8 @@ model {
   d_st ~ dnorm(33.8e-6, 1 / 0.5e-6^2)T(0,)  #stomatal depth in m
   D_co2 = 1.55e-5  # diffusivity of CO2, T-dependent in m^2/sec
   a_st ~ dnorm(a_st.obs, 1 / a_st.sd^2)T(0,) # stomatal pore area in m^2
-  d_bl = 0.66e-3  # boundary layer thickness in m
+  l_leaf ~ dnorm(l_leaf.obs, 1 / l_leaf.sd^2)T(0,) # leaf length in m 
+  v_wind = 1 # wind velocity in m / s
   d_as = 217.7e-6  # assimilating tissue thickness in m
   tau_as = 1.571  # assimilating tissue tortuosity dimensionless
   n_as = 0.35  # assimilating tissue porosity dimensionless
