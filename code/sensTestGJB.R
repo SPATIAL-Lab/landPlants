@@ -1,13 +1,15 @@
 # Test the forward model across range of CO2 and 2nd parameter ----
 CO2_a = rep(seq(250, 1500, length = 25), 4)
-a_st = c(rep(1 / 1e6^2, 25), rep(5 / 1e6^2, 25), rep(15 / 1e6^2, 25), 
-      rep(50 / 1e6^2, 25))
+Omega = c(rep(0, 25), rep(0.2, 25), rep(0.4, 25), 
+      rep(0.6, 25))
 
-tst = fm(CO2_a = CO2_a, a_st = a_st) 
+source("code/forwardModel.R")
+tst = fm(CO2_a = CO2_a, Omega = Omega) 
 
 tst$CO2 = CO2_a
-tst$a_st = a_st
+tst$Omega = Omega
 
+png("out/senstest.png", 7, 5, "in", res = 300)
 layout(matrix(1:4, nrow = 2))
 par(mar = c(4, 4, 1, 1))
 cats = unique(tst[, 7])
@@ -20,26 +22,29 @@ for(i in 1:4){
     lines(dsub[, 6], dsub[, 1 + i], xlab = names(dsub)[6], 
           ylab = names(dsub)[1 + i], col = j)
   }
-  legend("topleft", legend = paste(names(tst)[7], "=", cats), col = seq_along(cats), 
+  if(i == 3){
+    legend("bottomright", legend = paste(names(tst)[7], "=", cats), col = seq_along(cats), 
          lty = 1, bty = "n", bg = NULL)
+  }
 }
+dev.off()
 
 # Test initial JAGS implementation ----
 library(R2jags)
 
 ## Baseline scenario
+inits = NULL
+parms = c("v", "D13C", "CO2_a", "q", "rh_air", "a_st", "d_st", "A", "E")
+
 data = list("v.obs" = 100e6, "v.sd" = 1e6, "D13C.obs" = 16, "D13C.sd" = 0.3,
             "a_st.obs" = 12.3e-12, "a_st.sd" = 0.1e-12, "l_leaf.obs" = 84e-3,
-            "l_leaf.sd" = 1e-3)
-inits = NULL
-parms = c("v", "D13C", "CO2_a", "q", "rh_air", "a_st", "d_st")
-
+            "l_leaf.sd" = 1e-3, "Elim" = 2e-4)
 p1 = jags(data, inits, parms, "code/JAGSmodel.R")
 
 ## Lower stomatal density
 data = list("v.obs" = 50e6, "v.sd" = 1e6, "D13C.obs" = 16, "D13C.sd" = 0.3,
             "a_st.obs" = 12.3e-12, "a_st.sd" = 0.1e-12, "l_leaf.obs" = 84e-3,
-            "l_leaf.sd" = 1e-3)
+            "l_leaf.sd" = 1e-3, "Elim" = 2e-4)
 p2 = jags(data, inits, parms, "code/JAGSmodel.R")
 
 ## Higher D13C

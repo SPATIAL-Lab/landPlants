@@ -2,6 +2,7 @@ model {
   
   # Likelihood ----
   D13C.obs ~ dnorm(D13C, 1 / D13C.sd^2)
+  Elim ~ dnorm(E, 1 / (E * 0.1) ^ 2)T(E, )
   
   # Equations ----
   ## boundary layer thickness ----
