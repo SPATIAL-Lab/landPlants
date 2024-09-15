@@ -45,3 +45,119 @@ fm = function(## Parameters
   # Return ----
   return(data.frame(g, E, C_i, A, D13C))
 }
+
+# Konrad ----
+## dw = water vapor deficit
+## wi_sat = internal specific humidity
+## wa = ambient specific humidity
+## g = stomatal conductance 
+## Ca = atmospheric CO2
+## K = MM constant
+## Gamma =
+## q =
+## Rd = 
+## lambda = 
+## a = 
+## nu
+## ast =
+## dst = 
+## Dco2 = Diffusivity of CO2 in m^2/s
+## Dwv = Diffusivity of water vapor in m^2/s
+## dbl =
+## das = 
+## tas = 
+## nas = 
+## A = assimilation rate
+## E = specific transpiration
+## t = air temperature in K
+## Rgas = Ideal gas constant in kJ/mol
+## p_atm = air pressure in J/m^3
+## u = constant, mol/m^3
+## v = constant, unitless
+## Vm_w = molar volume of water in m^3/mol
+## rho_w = water density in J*s^2/m^5
+## grav = gravitational acceleration in m/s^2
+
+## Water
+wa = wrel * wi_sat
+dw = wi_sat - wa
+
+## Rubisco limited case
+q = Vcmax_25 * exp(26.35 - 65.33 * (kJ / mol) / (Rgas * t))
+Rd = Rd_25 * exp(18.72 - 46.39*(kJ / mol) / (Rgas * t));
+W = q * kappa * Ca / (kappa * Ca * K * (1 + pO / Ko))
+
+## Some enzymatic stuff
+Jmax = Jmax_25 * exp(17.57 - 43.54 * (kJ/mol)/(Rgas * t))
+Ph_PSII = 0.352 + 0.022 * (t - 273) - 3.4 * 10^(-4) * (t - 273) ^ 2
+Q2 = Q * al_l * Ph_PSII * be_p
+Th_PSII = -4.154 + 0.018 * t - 0.0003700000000 * (t - 273) ^ 2 # t in K
+Jp = (Q2 + Jmax - sqrt((Q2 + Jmax) ^ 2 - 4 * Th_PSII * Q2 * Jmax)) / 
+  2 / Th_PSII
+
+## ?
+Kc = exp(38.05 - 79.43 * (kJ/mol) / (Rgas * t)) * (mumol / mol) * 
+  (p_atm / Rgas / t) * kc
+Ko = exp(20.30 - 36.38 * (kJ/mol) / (Rgas * t)) * mmol/mol * 
+  (p_atm / Rgas / t) * ko
+pO = 210 * mmol/mol * (p_atm / Rgas / t)
+Ga0 = exp(19.02 - 37.83 * (kJ/mol) / (Rgas * t)) * (mumol/mol) *
+  (p_atm / Rgas / t)
+ga_G = 1
+Gamma = ga_G * Ga0
+K_c = Kc * (1 + pO / Ko)
+
+## Conversion of radiative power I_l (in J/m^2/s) to Quantum yield Q (in mol/m^2/s)
+Q = I_l / 2e5  # equation unclear, is this multiplication or division?
+
+## Physical quantities
+Dco2 = (t / 273.15) ^ (1.8) * 1.33 * 10^(-5)
+Dwv = (t / 273.15) ^ (1.8) * 2.13 * 10^(-5)
+a = 1.6
+Rgas = 8.3143e-3
+p_atm = 101325.0 #sea level pressure
+u = 2.035e10
+v = 5306
+wi_sat = u / t * exp(-v / t)
+Vm_w = 18.015e-6
+rho_w = 10e3
+grav = 9.81
+
+g = -1 / (Ca + K) ^ 2 * (sqrt(((K + Gamma) * q * 
+                                 (Rd * K + Ca * Rd - Ca * q + q * Gamma) /
+                                 (-Ca - K + lambda * a * dw) / 
+                                 lambda / a / dw)) * 
+                           (2 * a * dw * lambda - Ca - K) + 
+                           Ca * Rd + Rd * K + 2 * q * Gamma - 
+                           Ca * q + q * K)
+
+nu = 1 / ast * (dst * g) / (Dco2 - (dbl + das * tas ^ 2 / nas) * g)
+
+A = -(((K + Gamma) * q * (Rd * K + Ca * Rd - Ca * q + q * Gamma) / 
+         (-Ca - K + lambda * a * dw) / 
+         lambda / a / dw) ^ (1/2) * a * dw * lambda + 
+        Rd * K + Ca * Rd - Ca * q + q * Gamma) / (Ca + K)
+
+E = a * g * dw
+
+# Franks ----
+
+## Constants
+d.v  = 0.000940096  # ratio of diffusivity of water vapor in air to the molar volume of air (mol m-1 s-1)
+gamma = 40  # CO2 compensation point (ppm) 
+a = 4.4  # discrimination against 13C during diffusion through air (per mil)
+b = 30  # discrimination against 13C due to carboxylation, mainly due to Rubisco (per mil) - make variable?
+
+Pl = GCL * s1  # Pl = stomatal pore length (m)
+l = GCW * s2  # l = stomatal depth (m)
+amax = (pi * (Pl / 2) ^ 2) * s3  # amax = the area of a fully-open stomatal pore
+gcmax = (d.v * D * amax) / (l + ((pi / 2)*sqrt(amax / pi))) / 1.6  # gcmax = maximum stomatal conductance to CO2; Note: gcmax multiplied by 1.6 gives maximum conductance to water vapor, gwmax
+gcop = gcmax * s4  # total operating stomatal conductance to CO2
+
+A = A0 * (((ci.ca * ca - gamma) * (CiCa0 * CO2_0 + 2 * gamma)) / 
+            ((ci.ca * ca + 2 * gamma) * (CiCa0 * CO2_0 - gamma)))
+
+D13Cap = (d13Ca - d13Cp) / (1 + d13Cp / 1000)  # D13Cap = the stable carbon isotopic fractionation between leaf and atmosphere (per mil)
+ci.ca = (D13Cap - a) / (b - a)
+
+
