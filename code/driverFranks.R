@@ -1,5 +1,8 @@
 library(R2jags)
 
+# Test data ----
+## Invert PSM using Dana's test Ginko data
+
 input = read.csv("data/Franks_model_input.csv")[1,]
 
 data = list("d13C" = c(input$d13Cp, input$ed13Cp),
@@ -22,7 +25,7 @@ abline(v = mean(sl$ca), col = "red")
 plot(density(rgamma(1e6, 15, 1e6)), ylim = c(0, 2e6), main = "Pl")
 lines(density(sl$Pl), col = "red")
 
-# Only d13C
+## Do the same conditioned only on d13C
 
 data = list("d13C" = c(input$d13Cp, input$ed13Cp))
 
@@ -41,3 +44,36 @@ abline(v = mean(sl$ca), col = "red")
 
 plot(density(rgamma(1e6, 15, 1e6)), main = "Pl")
 lines(density(sl$Pl), col = "red")
+
+# Template data ----
+
+library(openxlsx)
+source("code/helpers.R")
+
+## Lei file works but has missing uncertainties
+
+d = read.xlsx("data/stomata-franks_lei_2018.xlsx", sheet = 1, startRow = 3)
+
+data = parseFranks(d)
+
+parms = c("Pl", "l", "amax.scale", "D", "gc.scale", "ca", "meso.scale",
+          "Ci0_m", "A0_m", "d13Ca_m", "A", "D13C", "gcop")
+
+post = jags(data, NULL, parms, "code/forwardFranksMulti.R", n.iter = 5e4)
+
+View(post$BUGSoutput$summary)
+plot(d$CO2_ppm, post$BUGSoutput$median$ca)
+abline(0, 1)
+
+## None of these work w/o further tinkering
+
+### Both have text in the d13Cp column
+d = read.xlsx("data/stomata-franks_du_2018.xlsx", sheet = 1, startRow = 3)
+d = read.xlsx("data/stomata-franks_li_2019.xlsx", sheet = 1, startRow = 3)
+
+### Fixed A
+d = read.xlsx("data/stomata-franks_montanez_2016.xlsx", sheet = 1, startRow = 3)
+
+### Both missing CiCa0
+d = read.xlsx("data/stomata-franks_zhou_2020.xlsx", sheet = 1, startRow = 3)
+d = read.xlsx("data/stomata-franks_richey_2018.xlsx", sheet = 1, startRow = 3)
