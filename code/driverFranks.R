@@ -98,8 +98,10 @@ traceplot(as.mcmc(post))
 
 ## All samples
 data = parseFranks(d, FALSE)
-post = jags.parallel(data, NULL, parms, "code/forwardFranksMulti.R", n.chains = 3,
-                     n.iter = 5.01e6, n.burnin = 1e4, n.thin = 2e2)
+system.time({
+  post = jags.parallel(data, NULL, parms, "code/forwardFranksMulti.R", n.chains = 3,
+                       n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)
+})
 
 ## Now w/ collapsing
 data = parseFranks(d)
