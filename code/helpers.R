@@ -1,6 +1,8 @@
-parseFranks = function(d){
+parseFranks = function(d, condense = TRUE){
   ## Parse values from sheet, obs, parameters, constants
-  ## Need indexing on sample and on taxon 
+
+  ## Drop aggregate estimate rows based on missing stomatal density
+  d = d[!is.na(d$Dab), ]
   
   data = list()
   
@@ -17,7 +19,7 @@ parseFranks = function(d){
   
   mp.names = c("d13Ca", "A0", "CiCa0", "gb", "s1", "s2", "s3",
                "s4", "s5")
-  mp.sd = c(0.5, 0.25, 0.05, 0.05, 0.05, 0.025, 0.01, 0.001)
+  mp.sd = c(0.5, 0.25, 0.05, 0.05, 0.05, 0.05, 0.025, 0.01, 0.001)
   
   for(i in seq_along(mp.names)){
     ci = match(mp.names[i], names(d))
@@ -37,7 +39,40 @@ parseFranks = function(d){
   names(data) = c(data.names, mp.names, c.names)
   
   data$Ci0 = data$CiCa0 * data$CO2_0
+  names(data$Ci0) = c("Ci0", "eCi0")
   data = data[!(names(data) %in% c("CiCa0", "CO2_0"))]
+  
+  if(condense){
+    ## Sites index
+    ci = match("Stratigraphic.Level", names(d))
+    strats = unique(d[, ci])
+    data$level = match(d[, ci], strats)
+    
+    ## Condense site level parameters
+    ### First occurrence of each strat level
+    fo = match(strats, d[, ci])
+    data$d13Ca = data$d13Ca[fo, ]
+    
+    ## Taxa index
+    gs = paste(d$Genus, d$Species)
+    species = unique(gs)
+    data$species = match(gs, species)
+    
+    ## Condense species level parameters
+    ### First occurrence of each species
+    fo = match(species, gs)
+    data$gb = data$gb[fo, ]
+    data$A0 = data$A0[fo, ]
+    data$Ci0 = data$Ci0[fo, ]
+    data$s5 = data$s5[fo, ]
+    data$s4 = data$s4[fo, ]
+    data$s3 = data$s3[fo, ]
+  } else{
+    data$species = data$level = seq_len(nrow(d))
+  }
+  
+  # Scale for better sampling
+  data$Dab = data$Dab * 1e-7
   
   return(data)
 }
