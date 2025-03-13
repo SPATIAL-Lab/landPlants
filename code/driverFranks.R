@@ -1,4 +1,6 @@
 library(R2jags)
+library(openxlsx)
+source("code/helpers.R")
 
 # Test data ----
 ## Invert PSM using Dana's test Ginko data
@@ -47,9 +49,6 @@ lines(density(sl$Pl), col = "red")
 
 # Template data ----
 
-library(openxlsx)
-source("code/helpers.R")
-
 ## Lei file works but has missing uncertainties
 
 d = read.xlsx("data/stomata-franks_lei_2018.xlsx", sheet = 1, startRow = 3)
@@ -78,31 +77,36 @@ d = read.xlsx("data/stomata-franks_montanez_2016.xlsx", sheet = 1, startRow = 3)
 d = read.xlsx("data/stomata-franks_zhou_2020.xlsx", sheet = 1, startRow = 3)
 d = read.xlsx("data/stomata-franks_richey_2018.xlsx", sheet = 1, startRow = 3)
 
-## Zhang file from Dana, multi-site, multi-species
+# Zhang data, multi-site, multi-species ----
 
-### First w/o collapsing, single specimen interpretations
+## First w/o collapsing, single specimen interpretations
 d = read.xlsx("data/stomata-franks_zhang_2024_P1.0.xlsx", sheet = 1, startRow = 3)
 
-### Test sample 4
+## Test sample 4
 parms = c("Pl", "l", "amax.scale", "D", "gc.scale", "ca", "meso.scale",
           "Ci0_m", "A0_m", "d13Ca_m", "A", "D13C", "gcop")
 
 data = parseFranks(d[4, ], FALSE)
-post = jags.parallel(data, NULL, parms, "code/forwardFranksMulti.R", n.chains = 3,
-                     n.iter = 2e6, n.thin = 1e2)
+
+system.time(
+  {post = jags.parallel(data, NULL, parms, "code/forwardFranksMulti.R", n.chains = 3,
+                     n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)}
+)
 
 View(post$BUGSoutput$summary)
-traceplot(post)
+traceplot(as.mcmc(post))
 
-### All samples
+## All samples
 data = parseFranks(d, FALSE)
 post = jags.parallel(data, NULL, parms, "code/forwardFranksMulti.R", n.chains = 3,
                      n.iter = 5.01e6, n.burnin = 1e4, n.thin = 2e2)
 
-### Now w/ collapsing
+## Now w/ collapsing
 data = parseFranks(d)
-post.cl = jags.parallel(data, NULL, parms, "code/forwardFranksMulti.R", n.chains = 3,
-                        n.iter = 5.01e6, n.burnin = 1e4, n.thin = 2e2)
+system.time({
+  post.cl = jags.parallel(data, NULL, parms, "code/forwardFranksMulti.R", n.chains = 3,
+                          n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)
+})
 
 View(post$BUGSoutput$summary)
 View(post.cl$BUGSoutput$summary)

@@ -25,20 +25,21 @@ model {
     
     gcop[i] = (1 / gcop.g[i] + 1 / gb_m[species[i]]) ^ -1
     gcop.g[i] = gcmax[i] * gc.scale[species[i]]
-    gcmax[i] = (d.v * D[i] * 1e7 * amax[i]) / (l[i] + ((pi / 2) * sqrt(amax[i] / pi))) / 1.6
+    gcmax[i] = (d.v * D[i] * amax[i]) / (l[i] + ((pi / 2) * sqrt(amax[i] / pi))) / 1.6
     amax[i] = (pi * (Pl[i] / 2) ^ 2) * amax.scale[species[i]]
     
     # Priors
     ## Individual
     Pl[i] ~ dgamma(GCLab[i, 1] * Pl.beta[i], Pl.beta[i]) # Pore length
     Pl.beta[i] = GCLab[i, 1] / GCLab[i, 2] ^ 2
-    
+
     l[i] ~ dgamma(GCWab[i, 1] * l.beta[i], l.beta[i]) # Pore depth
     l.beta[i] = GCWab[i, 1] / GCWab[i, 2] ^ 2
 
-    D[i] ~ dgamma(Dab[i, 1] * D.beta[i], D.beta[i]) # Stomatal density
+    D[i] = d[i] * 1e7
+    d[i] ~ dgamma(Dab[i, 1] * D.beta[i], D.beta[i]) # Stomatal density
     D.beta[i] = Dab[i, 1] / Dab[i, 2] ^ 2
-    
+
     s2_m[i] ~ dgamma(s2[i, 1] * s2.beta[i], s2.beta[i])
     s2.beta[i] = s2[i, 1] / s2[i, 2] ^ 2
     
@@ -47,14 +48,7 @@ model {
     
   }
   
-    ## Locality
-  for(i in 1:length(d13Ca[, 1])){
-    ca[i] = ca.s[i] * 1e3
-    ca.s[i] ~ dunif(0.1, 8)
-    d13Ca_m[i] ~ dnorm(d13Ca[i, 1], 1 / d13Ca[i, 2] ^ 2)
-  }
-    
-    ## Taxon
+  ## Taxon
   for(i in 1:length(gb[, 1])){
     amax.scale[i] ~ dbeta(s3[i, 1] * amax.v[i], (1 - s3[i, 1]) * amax.v[i]) # aka s3
     amax.v[i] = (s3[i, 1] * (1 - s3[i, 1])) / s3[i, 2] ^ 2 - 1
@@ -75,6 +69,13 @@ model {
     gb.beta[i] = gb[i, 1] / gb[i, 2] ^ 2
   }
 
+  ## Locality
+  for(i in 1:length(d13Ca[, 1])){
+    ca[i] = ca.s[i] * 1e3
+    ca.s[i] ~ dunif(0.1, 8)
+    d13Ca_m[i] ~ dnorm(d13Ca[i, 1], 1 / d13Ca[i, 2] ^ 2)
+  }
+  
   # Constants
   pi = 3.14159265
   a = 4.4
