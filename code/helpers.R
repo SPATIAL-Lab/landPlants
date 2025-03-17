@@ -78,7 +78,7 @@ parseFranks = function(d, condense = TRUE){
   }
   
   # Scale for better sampling
-  data$Dab = data$Dab * 1e-7
+#  data$Dab = data$Dab * 1e-7
   
   return(data)
 }

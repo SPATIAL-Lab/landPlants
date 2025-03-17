@@ -1,0 +1,520 @@
+Species,Type_code,Age_Myr,Size_microns,Density_mm2,Ref
+Aglaophyton major,1,395,14000,4.5,-1
+Sawdonia ornata,2,395,1161,4.3,-1
+Horneophyton lignieri,2,395,20700,3,-1
+Aglayophyton major,1,395,14000,1,-1
+Rhynia gwynne-vaughanii,2,395,8500,1.8,-1
+Nothia aphylla,1,395,9975,5.5,-1
+Asteroxylon mackiei,2,395,4550,21,-1
+Drepanophycus spinaeformis,2,395,1734,16.6,-1
+Hsua deflexa,2,395,3149,,-2
+Sporathylacium salopense,2,395,1190,42,-3
+Sporoginites exuberans,2,395,2475,11,-4
+Baragwanathia abitibiensis,2,390,,28,-5
+Drepanophycus spinaeformis,2,390,3600,13,-6
+Cooksonia pertoni,2,390,2250,,-6
+Unknown 1,2,390,1054,,-6
+Unknown 2,2,390,900,,-6
+Huia gracilis,2,390,,13,-7
+Archaeopteris macilenta,4,385,3348,32,-8
+Archaeopteris macilenta,4,385,2793,37,-8
+Archaeopteris sp.,4,365,1184,,-9
+Hsua robusta,2,355,5400,5,-10
+Swillingtonia denticulata,5,310,300,787.8,-11
+Blanzyopteris praedentata,3,305,1650,310,-12
+Reticulopteris germarii,3,305,300,300,-13
+Barthelpteris germarii,3,305,,304,-13
+Neuropteris obliqua,3,305,300,113,-14
+Laveineopteris loshii,3,305,250,325,-14
+Neuralethopteris schlehanii,3,305,360,300,-14
+Neuropteris loshii,3,305,206,200,-15
+Neuropteris tenuifolia,3,305,206,300,-15
+Neuropteris rarinervi,3,305,300,140,-15
+Neuropteris ovata var. simonii,3,305,300,90,-15
+Neuropteris ovata var. sarana,3,305,360,28,-15
+Neuropteris aconiensis,3,305,120,50,-15
+Neuropteris flexuosa,3,305,250,120,-15
+Neuropteris scheuchzeri,3,305,200,90,-15
+Neuropteris macrophylla,3,305,200,65,-15
+Neuropteris britannica,3,305,206,130,-15
+Neuropteris subariculata,3,305,297,91,-15
+Neuropteris sp. 1,3,305,404,180,-15
+Neuropteris sp. 2,3,305,206,180,-15
+Alethopteris sullivanti,3,305,702,472,-16
+Alethopteris lesquereuxi,3,305,616,250,-17
+Lepidodendron obovatum,2,305,1575,200,-18
+Lepidodendron dichotomum,2,305,1000,450,-18
+Lepidodendron loricatum,2,305,1125,200,-18
+Senftenbergia plumosa,3,305,200,200,-19
+Laveinopteris tenuifolia,3,305,450,370,-20
+Cordaites principalis morph. 1,5,305,104,560,-21
+Cordaites principalis morph. 2,5,305,510,104,-21
+Cordaites principalis morph. 3,5,305,216,150,-21
+Cordaites principalis morph. 4,5,305,540,204,-21
+Pecopteris nyranensis,3,305,300,,-22
+Pecopteris aspidioides,3,305,325,,-22
+Pecopteris polipodioides,3,305,630,,-22
+Pecopteris miltonii,3,305,800,,-22
+Neopteris ovata,3,305,150,343,-23
+Lescuropteris genuina,3,305,400,91,-24
+Schopfiastrum decussatum,3,305,425,28,-25
+Karinopteris spp.,3,300,,38,-26
+Lebachia frondosa,5,288,,309,-11
+Sphenophyllum apiciserratum,6,270,900,38,-27
+Sphenophyllum kaboense,6,270,840,34,-27
+Callipteris changii,7,270,,384,-27
+Psygmophyllum multipartitum,8,270,,296,-28
+Gigantonoclea guizhouensis,9,270,2530,70,-28
+Gigantonoclea pubescens,9,260,450,184,-28
+Notophytum krauselii,5,225,1700,,-29
+Eoginkgoites sydneyi,9,200,560,,-30
+Glossophyllum florinii,8,200,3120,48,-31
+Pagiophyllum papillatus,5,200,4510,111,-32
+Brachyphyllum comancheanum,5,200,900,63,-33
+Eoginkgoites davidsonii,9,200,900,30,-34
+Aricycas paulae,10,200,3600,60,-35
+Williamsonia nizhonia,9,200,,15,-36
+Cladophlebis yazzia,7,200,1296,20,-37
+Nilsonia sturii,10,200,741,100,-31
+Nilsonia riegeri,10,200,741,,-31
+Nilsonia lunzensis,10,200,1540,42,-31
+Nilsonia neuberi,10,200,945,117,-31
+Sphenobaiera huangii,8,190,1216,48,-38
+Czekanowskia nizhonia,15,175,,50,-37
+Brachyphyllum negevensis,5,170,,40,-39
+Brachyphyllum pulcher,5,170,,50,-39
+Pagiophyllum peregrinum,5,168,,109,-40
+Czekanowskia turneri,15,150,3500,24,-41
+Czekanowskia nipponica,15,150,,32,-41
+Otozamites archangelski,9,140,5092,,-42
+Otozamites ornatus,9,140,2652,69,-42
+Otozamites parviauriculata,9,140,5022,,-42
+Otozamites parvus,9,140,2046,,-42
+Otozamites sanctaecrucis,9,140,2080,,-42
+Otozamites waltonii,9,140,3000,,-42
+Ptilophyllum antarcticum,9,140,1350,,-42
+Ptilophyllum ghiense,9,140,1350,,-42
+Ptilophyllum hislopi,9,140,2880,,-42
+Ptilophyllum valvatum,9,140,3672,,-42
+Frenelopsis varians,5,140,,31,-43
+Pseudofrenelopsis dalatzensis,5,140,7125,72,-44
+Pseudofrenelopsis heishanensis,5,140,10000,61,-44
+Pseudofrenelopsis papillosa,5,140,5829,55,-44
+Pseudoctenus ornata,10,140,10000,14,-45
+Sagenopteris inequilateralis,11,140,1242,40,-46
+Gleichenia chaloneri,7,140,864,,-47
+Glenrosa texensis,5,130,,48,-48
+Glenrosa pagiophylloides,5,130,,28,-48
+Tarphyderma glabra,5,120,3744,,-49
+Tomaxellia biforme,5,120,4900,,-50
+Pseudoctenis ornata,10,120,10000,,-45
+Pseudofrenelopsis varians,5,110,10000,,-51
+Pseudofrenelopsis parceramosa,5,110,6400,,-51
+Pseudofrenelopsis intermedia,5,110,5000,,-51
+Pseudofrenelopsis nathorstiana,5,110,4526,,-51
+Mirovia szaferi,5,110,9900,,-52
+Mirovia gothanii,5,110,9900,,-52
+Araucaria grandifolia,5,105,1404,40,-53
+Araucaria seorsum,5,105,4700,28,-54
+Araucaria lanceolatus,5,105,3800,32,-54
+Araucaria acutifoliatus,5,105,3350,42,-54
+Araucaria falcatus,5,105,1680,67,-54
+Araucaria carinatus,5,105,4375,110,-54
+Araucaria otwayensis,5,105,2808,,-54
+Pseudofrenelopsis nathorstiana,5,100,4526,115,-51
+Pseudofrenelopsis parceramosa,5,100,6400,42,-51
+Watsoniocladus virginiensis,5,100,5200,46,-51
+Nilsonia bohemia,10,95,400,,-55
+Nilsonia orientalis,10,95,75,,-55
+Jursia jirusii,10,95,759,,-55
+Nilsoniopteris pecinovensis,9,95,900,,-55
+Frenelopsis hogeneggeri,5,95,4900,100,-56
+Frenelopsis kaneviensis,5,95,2500,30,-56
+Frenelopsis veneta,5,95,8100,90,-56
+Brachyphyllum patens,5,95,9000,57,-57
+Pagiophyllum bladensis,5,80,594,,-58
+Pandanites trinervis,12,80,250,144,-59
+Sabalites longirachis,12,70,100,,-59
+Decussocarpus brownei,5,50,558,116,-60
+Falcatifolium australis,5,50,1080,158,-60
+Dacrycarpus eocinica,5,50,972,252,-60
+Prumnopitys tasmanica,5,50,1107,178,-60
+Prumnopitys lanceolata,5,50,598,200,-60
+Ocotea obtusifolia,12,45,616,364,-61
+Knightiophyllum wilcoxianum,12,45,336,,-62
+Knightia excelsa,12,45,616,596,-62
+Sequoia chinensis,5,45,3888,60,-63
+Lepidozamia hopei,10,40,2753,,-64
+Lepidozamia peroffskyana,10,40,2394,,-64
+Lepidozamia hopeites,10,40,2242,,-64
+Lepidozamia faveolata,10,40,1734,,-64
+Metasequoia milleri,5,40,600,,-63
+Rhodophyllum pasekovicum,12,40,750,,-65
+Rhodophyllum sinuata,12,40,750,,-65
+Rhodophyllum sinuata var. engelhardti,12,40,1800,,-65
+Rhodophyllum tristanioides,12,40,625,,-65
+Rhodophyllum rossmasslerii,12,40,600,,-65
+Rhodophyllum psidioides,12,40,750,,-65
+Rhodophyllum sinuatum,12,40,529,,-65
+Rhodophyllum reticulosum,12,40,1050,,-65
+Sequoia sempevirens,5,15,3162,85,-63
+Unknown Arundinoideae,13,10,26,285,-66
+Unknown graminoid,13,0.037,67,155,-67
+Unknown graminoid,13,0.036,81,132,-67
+Unknown graminoid,13,0.035,70,112,-67
+Unknown graminoid,13,0.034,74,116,-67
+Unknown graminoid,13,0.032,65,100,-67
+Unknown graminoid,13,0.031,54,143,-67
+Unknown graminoid,13,0.031,57,109,-67
+Unknown graminoid,13,0.029,60,149,-67
+Unknown graminoid,13,0.029,59,108,-67
+Unknown graminoid,13,0.028,68,149,-67
+Unknown graminoid,13,0.027,60,156,-67
+Unknown graminoid,13,0.026,71,121,-67
+Unknown graminoid,13,0.026,50,174,-67
+Unknown graminoid,13,0.025,67,177,-67
+Unknown graminoid,13,0.024,65,132,-67
+Unknown graminoid,13,0.024,59,113,-67
+Unknown graminoid,13,0.024,53,135,-67
+Unknown graminoid,13,0.023,59,197,-67
+Unknown graminoid,13,0.023,63,120,-67
+Unknown graminoid,13,0.023,54,140,-67
+Unknown graminoid,13,0.023,59,135,-67
+Unknown graminoid,13,0.022,65,172,-67
+Unknown graminoid,13,0.022,62,230,-67
+Unknown graminoid,13,0.021,72,96,-67
+Unknown graminoid,13,0.021,66,124,-67
+Unknown graminoid,13,0.021,65,146,-67
+Unknown graminoid,13,0.021,70,152,-67
+Unknown graminoid,13,0.02,77,162,-67
+Unknown graminoid,13,0.02,63,147,-67
+Unknown graminoid,13,0.019,64,214,-67
+Unknown graminoid,13,0.019,66,160,-67
+Unknown graminoid,13,0.018,59,141,-67
+Unknown graminoid,13,0.018,58,167,-67
+Unknown graminoid,13,0.017,66,151,-67
+Unknown graminoid,13,0.017,59,200,-67
+Unknown graminoid,13,0.016,59,198,-67
+Unknown graminoid,13,0.016,59,163,-67
+Unknown graminoid,13,0.016,56,214,-67
+Unknown graminoid,13,0.015,55,143,-67
+Unknown graminoid,13,0.015,55,163,-67
+Unknown graminoid,13,0.015,62,97,-67
+Unknown graminoid,13,0.014,66,147,-67
+Unknown graminoid,13,0.014,63,121,-67
+Unknown graminoid,13,0.014,58,106,-67
+Unknown graminoid,13,0.014,56,150,-67
+Unknown graminoid,13,0.014,55,114,-67
+Unknown graminoid,13,0.013,58,124,-67
+Unknown graminoid,13,0.013,62,86,-67
+Unknown graminoid,13,0.013,64,107,-67
+Unknown graminoid,13,0.013,62,128,-67
+Unknown graminoid,13,0.011,65,182,-67
+Unknown graminoid,13,0.011,62,135,-67
+Unknown graminoid,13,0.01,60,83,-67
+Unknown graminoid,13,0.009,62,145,-67
+Unknown graminoid,13,0.009,61,123,-67
+Unknown graminoid,13,0.008,55,166,-67
+Unknown graminoid,13,0.008,56,89,-67
+Unknown graminoid,13,0.008,55,167,-67
+Unknown graminoid,13,0.007,58,154,-67
+Unknown graminoid,13,0.006,61,82,-67
+Unknown graminoid,13,0.005,56,95,-67
+Unknown graminoid,13,0.005,66,73,-67
+Unknown graminoid,13,0.004,71,84,-67
+Unknown graminoid,13,0.003,59,125,-67
+Unknown graminoid,13,0.002,60,154,-67
+Unknown graminoid,13,0.001,62,163,-67
+Unknown graminoid,13,0.001,59,117,-67
+Abies normanniana,5,0,1372,110,-68
+Cedrus deodara,5,0,1178,85,-68
+Pinus sylvestris,5,0,784,120,-68
+Picea pungens,5,0,2205,39,-68
+Larix decidua,5,0,1092,16,-68
+Osmunda regalis,7,0,2128,67,-68
+Phyllitis scolopendrium,7,0,3234,59,-68
+Pteridium aquilinum,7,0,1288,85,-68
+Quercus myrsinaefolia High light,12,0,,1225,-69
+Quercus myrsinaefolia Low light,12,0,,567,-69
+Quercus valutina,12,0,1750,405,-70
+Quercus palustris,12,0,70,909,-70
+Tilia americana,12,0,473,891,-70
+Corylus americana,12,0,958,347,-70
+Cornus florida,12,0,717,83,-70
+Rhus copallina,12,0,25,731,-70
+Allium cepa,12,0,1596,175,-68
+Avena sativa,12,0,1456,45,-68
+Hordeum vulgare,12,0,798,85,-68
+Triticum vulgare,12,0,1484,40,-68
+Zea mays,12,0,1032,108,-68
+Aesculus hippocastanum,12,0,392,210,-68
+Carpinus betulus,12,0,768,170,-68
+Eucalyptus globulus,12,0,713,370,-68
+Quercus robur,12,0,504,340,-68
+Tilia europa,12,0,450,370,-68
+Helianthus annuus,12,0,928,175,-68
+Medicaga sativa,12,0,425,188,-68
+Nicotina tobacum,12,0,775,190,-68
+Pelargonium zonale,12,0,1672,179,-68
+Ricinus communis,12,0,912,270,-68
+Vicia faba,12,0,1150,75,-68
+Xanthium pennsylvanicum,12,0,975,177,-68
+Sedum spectabilis,12,0,1023,35,-68
+Tradescantia virginiana,12,0,2940,23,-68
+Commelina communis,12,0,576,67,-71
+Paphiopedilum venustum,12,0,3551,26,-72
+Betula lenta,12,0,717,160,-73
+Castanea dentata,12,0,473,280,-73
+Prunus pensylvanica,12,0,529,260,-73
+Quercus velutina,12,0,529,450,-73
+Sassafras albidum,12,0,214,225,-73
+Cornus alternifolia,12,0,280,180,-73
+Celtis tenuifolia,12,0,227,180,-73
+Fraxinus americana,12,0,370,150,-73
+Juglans nigra,12,0,370,260,-73
+Quercus macrocarpa,12,0,339,460,-73
+Ulmus rubra,12,0,403,150,-73
+Acer negundo,12,0,158,340,-73
+Acer saccharinum,12,0,85,300,-73
+Carya cordiformis,12,0,309,325,-73
+Fraxinus nigra,12,0,280,290,-73
+Prunus serotina,12,0,370,150,-73
+Tilia americana,12,0,354,120,-73
+Populus alba (4877),12,0,266,264,-74
+Populus X euramericana (4878),12,0,410,160,-74
+Populus X euramericana (4879),12,0,380,150,-74
+Populus X euramericana (5322),12,0,492,125,-74
+Populus X euramericana (5323),12,0,427,130,-74
+Populus X euramericana (5326),12,0,626,176,-74
+Populus X euramericana (5328),12,0,686,168,-74
+Populus X euramericana (5377),12,0,617,105,-74
+Populus candicans X P. berolinensis (5262),12,0,681,127,-74
+Populus candicans X P. berolinensis (5263),12,0,655,123,-74
+Populus betulifolia X P. trichocarpa (5331),12,0,390,109,-74
+Populus betulifolia X P. trichocarpa (5332),12,0,459,118,-74
+Populus deltoides X P. Trichocarpa (5265),12,0,630,179,-74
+Populus deltoides X P. Trichocarpa (5266),12,0,377,166,-74
+Populus deltoides X P. Trichocarpa (5334),12,0,387,141,-74
+Populus deltoides X P. platierensis (5264),12,0,324,126,-74
+Populus deltoides X P. caudina (5267),12,0,522,89,-74
+Populus charkowiensis X P. deltoides (5271),12,0,739,167,-74
+Populus tristis X P. balsamifera (5260),12,0,638,141,-74
+Populus sp. (5258),12,0,664,116,-74
+Populus nigra X P. laurifolia (5272),12,0,400,141,-74
+Acer rubrum,12,0,858,704,-70
+Aesculus glabra,12,0,253,345,-70
+Betula lenta,12,0,227,538,-70
+Carya glabra,12,0,227,381,-70
+Carya ovata (seedling),12,0,179,244,-70
+Carya ovata (mature),12,0,438,349,-70
+Carya tomentosa (seedling),12,0,227,345,-70
+Carya tomentosa (mature),12,0,438,240,-70
+Castanea dentata,12,0,1065,418,-70
+Celtis occidentalis,12,0,118,272,-70
+Fagus grandifolia,12,0,,693,-70
+Fraxinus americana,12,0,339,129,-70
+Gleditsia triacanthos,12,0,309,275,-70
+Gymnocladus dioicus,12,0,227,79,-70
+Juglans nigra (seedling),12,0,137,278,-70
+Juglans nigra (mature),12,0,179,255,-70
+Juglans cinerea,12,0,253,111,-70
+Liquidambr styraciflua,12,0,202,224,-70
+Liriodendron tulipifera,12,0,227,284,-70
+Magnolia acuminata,12,0,809,127,-70
+Magnolia grandiflora,12,0,1750,255,-70
+Morus rubra,12,0,202,154,-70
+Platanus occidentalis,12,0,473,306,-70
+Populus gileadensis,12,0,1418,119,-70
+Prunus serotina (seedling),12,0,339,237,-70
+Prunus serotina (mature),12,0,309,183,-70
+Quercus alba (seedling),12,0,158,624,-70
+Quercus alba (mature),12,0,280,514,-70
+Quercus coccinea,12,0,202,759,-70
+Quercus palustris (seedling),12,0,309,539,-70
+Quercus pallustrus (mature),12,0,70,909,-70
+Quercus phellos,12,0,158,755,-70
+Quercus prinus (seedling),12,0,202,257,-70
+Quercus prinus (mature),12,0,253,661,-70
+Quercus rubra (seedling),12,0,253,664,-70
+Quercus rubra (mature),12,0,370,681,-70
+Quercus stellata,12,0,717,424,-70
+Quercus valutina,12,0,1750,405,-70
+Robinia pseudoacacia (seedling),12,0,18,125,-70
+Robinia pseudoacacia (mature),12,0,85,191,-70
+Salix nigra,12,0,227,431,-70
+Tilia americana,12,0,473,89,-70
+Ulmus americana,12,0,227,230,-70
+Alnus rugosa (seedling),12,0,137,330,-70
+Alnus rugosa (mature),12,0,253,233,-70
+Asimina triloba,12,0,549,65,-70
+Carpinus caroliniana,12,0,202,234,-70
+Cercis canadensis,12,0,202,266,-70
+Cornus florida,12,0,717,83,-70
+Corylus americana,12,0,958,347,-70
+Diospyros virginiana,12,0,280,262,-70
+Hamamelis virginiana,12,0,510,168,-70
+Ilex opaca,12,0,438,289,-70
+Kalmia latifolia,12,0,403,175,-70
+Magnolia tripetala,12,0,473,161,-70
+Oxydendron arboreum,12,0,253,305,-70
+Rhus capallina,12,0,25,731,-70
+Sassafras albidum,12,0,227,306,-70
+Balanites aegyptiaca,12,0,438,46,-75
+Pistacia atlantica,12,0,473,386,-75
+Acacia longifolia,12,0,339,104,-75
+Callistemon laurifolia,12,0,473,361,-75
+Callistemon rigidus,12,0,858,259,-75
+Eucalyptus albens,12,0,630,128,-75
+Eucalyptus blakelyi,12,0,253,354,-75
+Eucalyptus cinerea,12,0,339,233,-75
+Eucalyptus ficifolia,12,0,339,328,-75
+Eucalyptus maculata,12,0,1065,242,-75
+Eucalyptus maideni,12,0,2355,36,-75
+Eucalyptus melanophloia,12,0,630,184,-75
+Eucalyptus meliodora,12,0,370,164,-75
+Eucalyptus sideroxylon,12,0,227,284,-75
+Eucalyptus staigeriana,12,0,958,292,-75
+Eucalyptus tesselaris,12,0,1120,291,-75
+Melaleuca styphelioides,12,0,370,367,-75
+Myoporum serratum,12,0,630,200,-75
+Ceratonia selequa,12,0,,289,-75
+Citrus paradisi,12,0,137,713,-75
+Citrus sinensis,12,0,339,580,-75
+Phillyrea media,12,0,227,472,-75
+Pistacia lentiscus,12,0,,280,-75
+Prunus amygdalus,12,0,630,327,-75
+Acacia cyanophylla,12,0,510,307,-75
+Eucalyptus camaldulensis,12,0,907,119,-75
+Eucalyptus citriodora,12,0,403,248,-75
+Melia azedarach,12,0,253,374,-75
+Pittosporum tobira,12,0,309,368,-75
+Pittosporum undulatum,12,0,202,339,-75
+Pyrus malus,12,0,403,444,-75
+Schinus molle,12,0,438,141,-75
+Ceratonia selequa,12,0,,345,-75
+Citrus paradisi,12,0,137,780,-75
+Citrus sinensis,12,0,227,682,-75
+Phillyrea media,12,0,309,513,-75
+Pistacia lentiscus,12,0,,299,-75
+Prunus amygdalus,12,0,589,360,-75
+Acacia cyanophylla,12,0,473,398,-75
+Eucalyptus camaldulensis,12,0,958,121,-75
+Eucalyptus citriodora,12,0,403,288,-75
+Melia azedarach,12,0,179,423,-75
+Pittosporum tobira,12,0,280,415,-75
+Pittosporum undulatum,12,0,227,557,-75
+Pyrus malus,12,0,339,534,-75
+Schinus molle,12,0,370,143,-75
+Arundo donax,13,0,153,301,-76
+Agropyron tsukusiense,13,0,354,24,-76
+Avena sativa,13,0,375,54,-76
+Bromas catharticus,13,0,447,35,-76
+Hordeum vulgare var. hexastichon,13,0,488,23,-76
+Phalaris arundinaceae,13,0,95,169,-76
+Hymenachne indica,13,0,474,89,-76
+Panicum bisulcatum,13,0,184,197,-76
+Zizania latifolia,13,0,37,606,-76
+Oryza sativa cv. Chyokai,13,0,63,446,-76
+Oryza sativa cv. Chyugoku 91,13,0,72,483,-76
+Oryza sativa cv. CP231,13,0,69,501,-76
+Oryza sativa cv. Dee-gee-woo-gen,13,0,71,436,-76
+Oryza sativa cv. Dee-gee-woo-gen,13,0,72,553,-76
+Oryza sativa cv. Gikoho,13,0,64,329,-76
+Oryza sativa cv. Ginbozu,13,0,70,451,-76
+Oryza sativa cv. Hoyoku,13,0,81,395,-76
+Oryza sativa cv. Hoyoku,13,0,39,574,-76
+Oryza sativa cv. Iri 338,13,0,59,309,-76
+Oryza sativa cv. Ishikari,13,0,68,427,-76
+Oryza sativa cv. IR-8,13,0,53,544,-76
+Oryza sativa cv. IR-8,13,0,46,648,-76
+Oryza sativa cv. IR-1561,13,0,57,532,-76
+Oryza sativa cv. IR-1561,13,0,46,741,-76
+Oryza sativa cv. IR-2061,13,0,57,452,-76
+Oryza sativa cv. IR-2061,13,0,46,641,-76
+Oryza sativa cv. Kamairazu MC-134,13,0,69,417,-76
+Oryza sativa cv. Kamairazu MC-134,13,0,67,466,-76
+Oryza sativa cv. Kamenoo,13,0,83,415,-76
+Oryza sativa cv. Kinmaze,13,0,63,496,-76
+Oryza sativa cv. Kinmaze,13,0,56,556,-76
+Oryza sativa cv. Koshijiwase,13,0,78,415,-76
+Oryza sativa cv. Koshihikari,13,0,73,420,-76
+Oryza sativa cv. Matsumae,13,0,76,471,-76
+Oryza sativa cv. Milyang 23,13,0,66,480,-76
+Oryza sativa cv. Milyang 23,13,0,37,837,-76
+Oryza sativa cv. Milyang 25,13,0,56,577,-76
+Oryza sativa cv. Milyang 25,13,0,50,637,-76
+Oryza sativa cv. Nagiho,13,0,69,452,-76
+Oryza sativa cv. Nishihomare,13,0,59,469,-76
+Oryza sativa cv. Nishihomare,13,0,39,608,-76
+Oryza sativa cv. Nipponbare,13,0,64,480,-76
+Oryza sativa cv. Norin 18,13,0,72,453,-76
+Oryza sativa cv. Norin 18,13,0,52,564,-76
+Oryza sativa cv. Omachi,13,0,70,460,-76
+Oryza sativa cv. Omachi,13,0,64,574,-76
+Oryza sativa cv. Raikei,13,0,59,589,-76
+Oryza sativa cv. Raikei,13,0,41,844,-76
+Oryza sativa cv. Rasht 507,13,0,62,588,-76
+Oryza sativa cv. Reiho,13,0,77,439,-76
+Oryza sativa cv. Reiho,13,0,50,575,-76
+Oryza sativa cv. Reimei,13,0,64,482,-76
+Oryza sativa cv. Rikku 132,13,0,83,379,-76
+Oryza sativa cv. R-P-9-3,13,0,55,661,-76
+Oryza sativa cv. R-P-9-3,13,0,60,800,-76
+Oryza sativa cv. Sawanohana,13,0,67,450,-76
+Oryza sativa cv. Sweon 258,13,0,74,570,-76
+Oryza sativa cv. Sweon 258,13,0,45,725,-76
+Oryza sativa cv. Sweon 262,13,0,55,507,-76
+Oryza sativa cv. Taichung 65,13,0,63,433,-76
+Oryza sativa cv. Taichung 65,13,0,57,533,-76
+Oryza sativa cv. Taichung-sen 10,13,0,64,516,-76
+Oryza sativa cv. Taichung-seiku 204,13,0,66,533,-76
+Oryza sativa cv. Taichung-seiku 204,13,0,50,784,-76
+Oryza sativa cv. Tainoo 67,13,0,70,437,-76
+Oryza sativa cv. Tainoo 67,13,0,49,610,-76
+Oryza sativa cv. Toyonishiki,13,0,73,403,-76
+Oryza sativa cv. Yaeho,13,0,67,478,-76
+Oryza sativa cv. Yukara,13,0,70,438,-76
+Chloris gayana,14,0,42,603,-76
+Cynodon daclyton,14,0,63,220,-76
+Eleusine coracana,14,0,156,76,-76
+Eragrostis ferruginae,14,0,113,86,-76
+Leptochloa chinensis,14,0,62,309,-76
+Sporobolus elongatus,14,0,147,104,-76
+Zoisia japonica,14,0,93,82,-76
+Zoisia tenuifolia,14,0,55,252,-76
+Arundinalla hirta,14,0,255,73,-76
+Coix lacryma-jobi var. ma-yuen,14,0,341,102,-76
+Digitaria sanguinalis,14,0,196,119,-76
+Echinochloa crus-galli,14,0,138,170,-76
+Echinochloa crus-galli var. edulis,14,0,179,93,-76
+Echinochloa crus-galli var. frumentaceae,14,0,118,140,-76
+Echinochloa crus-galli var. hispidula,14,0,122,195,-76
+Imperata cylindrica,14,0,79,287,-76
+Miscanthus sinensis,14,0,130,292,-76
+Panicum antidotale,14,0,104,126,-76
+Panicum coloratum,14,0,184,113,-76
+Panicum dichotomiflorum,14,0,167,90,-76
+Paspalum dlitatum,14,0,151,87,-76
+Paspalum distichum,14,0,142,118,-76
+Pennisetum alopecuroides,14,0,146,96,-76
+Saccharum officinarum cv. Badira,14,0,175,292,-76
+Saccharum officinarum cv. Yomitanzan,14,0,228,182,-76
+Saccharum officinarum cv. Tainan,14,0,171,169,-76
+Saccharum spp. cv. NCo310,14,0,269,177,-76
+Sorghum bicolor,14,0,205,127,-76
+Sorghum sudanense,14,0,130,117,-76
+Stenotaphrum seundatum,14,0,167,47,-76
+Vetivera sp.,14,0,150,136,-76
+Zea mays,14,0,292,112,-76
+Ginkgo sp.,8,61,276.74,136,"Kowalczyk et al., 2018"
+Ginkgo biloba,8,0,478.8,69.8,"Kowalczyk et al., 2018"
+Ginkgo adiantoides,8,65.5,405.04,105,"Milligan et al., 2019"
+Ginkgo adiantoides,8,66.5,553.8,64.1,"Milligan et al., 2019"
+Ginkgoites marginatus,8,188.05,313,56.7,"Zhou et al., 2020"
+Ginkgoites marginatus,8,188.05,197,56.1,"Zhou et al., 2020"
+Sphenobaiera huangii,8,188.05,786.9,30,"Zhou et al., 2020"
+Ginkgoites magnifolius,8,205,2115,13.6,"Wu et al., 2016"
+Ginkgoites obrutschewii,8,168.8,840,50.5,"Wu et al., 2016"
+Ginkgo daohugouensis,8,164.5,592,142,"Sun et al., 2018"
+Ginkgo parvifolia ,8,164.5,792,132,"Sun et al., 2018"
+Ginkgo cuneifolia,8,164.5,630,164.5,"Sun et al., 2018"
