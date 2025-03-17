@@ -3,7 +3,7 @@ CO2_a = rep(seq(250, 1500, length = 25), 4)
 Omega = c(rep(0, 25), rep(0.2, 25), rep(0.4, 25), 
       rep(0.6, 25))
 
-source("code/forwardModel.R")
+source("code/models/forwardModel.R")
 tst = fm(CO2_a = CO2_a, Omega = Omega) 
 
 tst$CO2 = CO2_a

@@ -25,7 +25,12 @@ parseFranks = function(d, condense = TRUE){
     ci = match(mp.names[i], names(d))
     d.sub = d[, ci:(ci + 1)]
     d.sub[is.na(d.sub[, 2]), 2] = mp.sd[i]
-    d.sub[d.sub[, 2] == 0, 2] = mp.sd[i]
+    if(mp.names[i] == "s1"){
+      # Special case if Pl is measured directly 
+      d.sub[d.sub[, 2] == 0, 2] = 0.001
+    } else{
+      d.sub[d.sub[, 2] == 0, 2] = mp.sd[i]
+    }
     data[[i + 4]] = d.sub
   }
   
@@ -67,6 +72,7 @@ parseFranks = function(d, condense = TRUE){
     data$s5 = data$s5[fo, ]
     data$s4 = data$s4[fo, ]
     data$s3 = data$s3[fo, ]
+    data$s2 = data$s2[fo, ]
   } else{
     data$species = data$level = seq_len(nrow(d))
   }

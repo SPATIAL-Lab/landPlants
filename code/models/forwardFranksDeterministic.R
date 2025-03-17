@@ -23,8 +23,10 @@ frank = function(data, ca){
   Ci0_m = data$Ci0[1, 1]  
   A0_m = data$A0[1, 1]
   gb_m = data$gb[1, 1]
-  Pl = data$GCLab[1, 1]
-  l = data$GCWab[1, 1]
+  s2_m = data$s2[1, 1]
+  s1_m = data$s1[1, 1]
+  Pl = data$GCLab[1, 1] / s1_m
+  l = data$GCWab[1, 1] / s2_m
   D = data$Dab[1, 1] * 1e7
   s2_m = data$s2[1, 1]
   s1_m = data$s1[1, 1]
@@ -70,8 +72,10 @@ ftest = function(d, ca, s){
         rep(data$d13Cp[1, 1], 2), col = "red", lwd = 4)
   
   ## Add JAGS result as ca density
-  post = jags.parallel(data, NULL, c("ca"), "code/forwardFranksMulti.R", n.chains = 3,
-                       n.iter = 5.01e6, n.burnin = 1e4, n.thin = 1e2)
+  system.time({
+    post = jags.parallel(data, NULL, c("ca"), "code/forwardFranksMulti.R", n.chains = 3,
+                         n.iter = 5.01e6, n.burnin = 1e4, n.thin = 1e2)
+  })
   dens = density(post$BUGSoutput$sims.list$ca)
   dens$y = min(d13C) + diff(range(d13C)) * dens$y / max(dens$y)
   lines(dens, col = "blue", lwd = 2)

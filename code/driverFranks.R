@@ -15,7 +15,7 @@ data = list("d13C" = c(input$d13Cp, input$ed13Cp),
 parms = c("Pl", "l", "amax.scale", "D", "gc.scale", "ca", "meso.scale",
           "Ci0", "A0", "d13Ca", "A", "D13C", "gcop")
 
-post = jags(data, NULL, parms, "code/forwardFranks.R", n.iter = 5e4)
+post = jags(data, NULL, parms, "code/models/forwardFranks.R", n.iter = 5e4)
 
 View(post$BUGSoutput$summary)
 sl = post$BUGSoutput$sims.list
@@ -34,7 +34,7 @@ data = list("d13C" = c(input$d13Cp, input$ed13Cp))
 parms = c("Pl", "l", "amax.scale", "D", "gc.scale", "ca", "meso.scale",
           "Ci0", "A0", "d13Ca", "A", "D13C", "gcop")
 
-post2 = jags(data, NULL, parms, "code/forwardFranks13C.R", n.iter = 5e5,
+post2 = jags(data, NULL, parms, "code/models/forwardFranks13C.R", n.iter = 5e5,
              n.burnin = 1e5, n.thin = 10)
 
 View(post2$BUGSoutput$summary)
@@ -58,7 +58,7 @@ data = parseFranks(d)
 parms = c("Pl", "l", "amax.scale", "D", "gc.scale", "ca", "meso.scale",
           "Ci0_m", "A0_m", "d13Ca_m", "A", "D13C", "gcop")
 
-post = jags(data, NULL, parms, "code/forwardFranksMulti.R", n.iter = 5e4)
+post = jags(data, NULL, parms, "code/models/forwardFranksMulti.R", n.iter = 5e4)
 
 View(post$BUGSoutput$summary)
 plot(d$CO2_ppm, post$BUGSoutput$median$ca)
@@ -77,74 +77,3 @@ d = read.xlsx("data/stomata-franks_montanez_2016.xlsx", sheet = 1, startRow = 3)
 d = read.xlsx("data/stomata-franks_zhou_2020.xlsx", sheet = 1, startRow = 3)
 d = read.xlsx("data/stomata-franks_richey_2018.xlsx", sheet = 1, startRow = 3)
 
-# Zhang data, multi-site, multi-species ----
-
-## First w/o collapsing, single specimen interpretations
-d = read.xlsx("data/stomata-franks_zhang_2024_P1.0.xlsx", sheet = 1, startRow = 3)
-
-## Test sample 4
-parms = c("Pl", "l", "amax.scale", "D", "gc.scale", "ca", "meso.scale",
-          "Ci0_m", "A0_m", "d13Ca_m", "A", "D13C", "gcop")
-
-data = parseFranks(d[4, ], FALSE)
-
-system.time(
-  {post = jags.parallel(data, NULL, parms, "code/forwardFranksMulti.R", n.chains = 3,
-                     n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)}
-)
-
-View(post$BUGSoutput$summary)
-traceplot(as.mcmc(post))
-
-## All samples
-data = parseFranks(d, FALSE)
-system.time({
-  post = jags.parallel(data, NULL, parms, "code/forwardFranksMulti.R", n.chains = 3,
-                       n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)
-})
-
-## Now w/ collapsing
-data = parseFranks(d)
-system.time({
-  post.cl = jags.parallel(data, NULL, parms, "code/forwardFranksMulti.R", n.chains = 3,
-                          n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)
-})
-
-View(post$BUGSoutput$summary)
-View(post.cl$BUGSoutput$summary)
-
-## Plot comparing sample medians for PSM and trad
-plot(d$CO2_ppm[-(1:3)], post$BUGSoutput$median$ca, pch = 21, bg = "grey50",
-     cex = 2, lwd = 2, ylab = "Median ca from PSM", 
-     xlab = "Median ca traditional")
-abline(0, 1, lwd = 2)
-points(d$CO2_ppm[-(1:3)], post$BUGSoutput$median$ca, pch = 21, bg = "grey50",
-       cex = 2, lwd = 2)
-
-library(viridisLite)
-cols = viridis(3)
-
-## Plot showing sample and level distributions
-dens = apply(post$BUGSoutput$sims.list$ca, 2, density)
-dens.cl = apply(post.cl$BUGSoutput$sims.list$ca, 2, density)
-
-ymax = 0
-for(i in seq_along(dens.cl)){
-  ymax = max(ymax, dens.cl[[i]]$y)
-}
-for(i in seq_along(dens)){
-  ymax = max(ymax, dens[[i]]$y)
-}
-
-plot(0, 0, type = "n", xlim = c(100, 8000), ylim = c(0, ymax), 
-     xlab = "ca", ylab = "Density")
-for(i in seq_along(dens)){
-  lines(dens[[i]], col = cols[data$level[i]])
-}
-
-for(i in seq_along(dens.cl)){
-  lines(dens.cl[[i]], col = cols[i], lwd = 4)
-}
-
-legend("topright", legend = c(261, 292, 417), col = cols, lwd = 3, bty = "n",
-       title = "Level")

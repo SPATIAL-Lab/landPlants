@@ -3,10 +3,9 @@ model {
   for(i in 1:length(Dab[, 1])){
     # Likelihood
     d13Cp[i, 1] ~ dnorm(d13C_m[i], 1 / d13Cp[i, 2] ^ 2)
-#    GCLab[i, 1] ~ dnorm(Pl[i] * s1_m[i], 1 / GCLab[i, 2] ^ 2)
-#    GCWab[i, 1] ~ dnorm(l[i] * s2_m[i], 1 / GCWab[i, 2] ^ 2)
-#    Dab[i, 1] ~ dnorm(D[i], 1 / Dab[i, 2] ^ 2)
-    
+    GCLab[i, 1] ~ dnorm(Pl[i] * s1_m[i], 1 / GCLab[i, 2] ^ 2)
+    GCWab[i, 1] ~ dnorm(l[i] * s2_m[species[i]], 1 / GCWab[i, 2] ^ 2)
+
     # Franks model
     d13C_m[i] = d13Ca_m[level[i]] - D13C[i]
     D13C[i] = a + (b[i] - a) * ci[i] / ca[level[i]]
@@ -30,19 +29,20 @@ model {
     
     # Priors
     ## Individual
-    Pl[i] ~ dgamma(GCLab[i, 1] * Pl.beta[i], Pl.beta[i]) # Pore length
-    Pl.beta[i] = GCLab[i, 1] / GCLab[i, 2] ^ 2
+    Pl[i] ~ dunif(1e-6, 1e-4)
+#    Pl[i] = GCL[i] / s1_m[i]
+#    Pl[i] ~ dgamma(GCLab[i, 1] * GCL.beta[i], GCL.beta[i]) # Pore length
+#    GCL.beta[i] = GCLab[i, 1] / GCLab[i, 2] ^ 2
 
-    l[i] ~ dgamma(GCWab[i, 1] * l.beta[i], l.beta[i]) # Pore depth
-    l.beta[i] = GCWab[i, 1] / GCWab[i, 2] ^ 2
+    l[i] ~ dunif(1e-6, 1e-4)
+#    l[i] = GCW[i] / s2_m[species[i]]
+#    l[i] ~ dgamma(GCWab[i, 1] * GCW.beta[i], GCW.beta[i]) # Pore depth
+#    GCW.beta[i] = GCWab[i, 1] / GCWab[i, 2] ^ 2
 
     D[i] = d[i] * 1e7
     d[i] ~ dgamma(Dab[i, 1] * D.beta[i], D.beta[i]) # Stomatal density
     D.beta[i] = Dab[i, 1] / Dab[i, 2] ^ 2
 
-    s2_m[i] ~ dgamma(s2[i, 1] * s2.beta[i], s2.beta[i])
-    s2.beta[i] = s2[i, 1] / s2[i, 2] ^ 2
-    
     s1_m[i] ~ dgamma(s1[i, 1] * s1.beta[i], s1.beta[i])
     s1.beta[i] = s1[i, 1] / s1[i, 2] ^ 2
     
@@ -50,6 +50,9 @@ model {
   
   ## Taxon
   for(i in 1:length(gb[, 1])){
+    s2_m[i] ~ dgamma(s2[i, 1] * s2.beta[i], s2.beta[i])
+    s2.beta[i] = s2[i, 1] / s2[i, 2] ^ 2
+    
     amax.scale[i] ~ dbeta(s3[i, 1] * amax.v[i], (1 - s3[i, 1]) * amax.v[i]) # aka s3
     amax.v[i] = (s3[i, 1] * (1 - s3[i, 1])) / s3[i, 2] ^ 2 - 1
     
