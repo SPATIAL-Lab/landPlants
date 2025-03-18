@@ -13,7 +13,7 @@ data = parseFranks(d[4:8, ], FALSE)
 
 # Run it
 system.time({
-  control = jags.parallel(data, NULL, parms, file.path(tempdir(), "fullFranks.txt"), 
+  control = jags.parallel(data, inits, parms, file.path(tempdir(), "fullFranks.txt"), 
                           n.chains = 4, n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)
 })
 
@@ -21,7 +21,7 @@ system.time({
 data$d13Cp[, 2] = rep(0.3)
 
 system.time({
-  real.sigmad13C = jags.parallel(data, NULL, parms, file.path(tempdir(), "fullFranks.txt"), 
+  real.sigmad13C = jags.parallel(data, inits, parms, file.path(tempdir(), "fullFranks.txt"), 
                           n.chains = 4, n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)
 })
 
@@ -48,20 +48,6 @@ data = data[names(data) != "GCWab"]
 
 # Run it
 system.time({
-  D.only = jags.parallel(data, NULL, parms, file.path(tempdir(), "DonlyFranks.txt"), 
+  D.only = jags.parallel(data, inits, parms, file.path(tempdir(), "DonlyFranks.txt"), 
                           n.chains = 4, n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)
 })
-
-# d13C only
-data = parseFranks(d[4:8, ], FALSE)
-
-
-plot(density(control$BUGSoutput$sims.list$ca[, 1]))
-lines(density(D.only$BUGSoutput$sims.list$ca[, 1]))
-
-for(i in seq_along(data$d13Cp[, i])){
-  plot(density(control$BUGSoutput$sims.list$ca[, i]), xlim = c(0, 8000),
-       main = "", lwd = 2)
-  lines(density(D.only$BUGSoutput$sims.list$ca[, i]), col = 2, lwd = 2)
-  
-}

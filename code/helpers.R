@@ -77,8 +77,9 @@ parseFranks = function(d, condense = TRUE){
     data$species = data$level = seq_len(nrow(d))
   }
   
-  # Scale for better sampling
-#  data$Dab = data$Dab * 1e-7
-  
   return(data)
 }
+
+inits = function() {
+  list("ca.s" = runif(length(d13Ca[, 1]), 0.5, 2))  
+}  

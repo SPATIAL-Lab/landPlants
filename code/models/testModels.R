@@ -1,7 +1,7 @@
 # Read base model and write to tempdir
 basemod = readLines("code/models/forwardFranksMulti.R")
 
-writeLines(basemode, file.path(tempdir(), "fullFranks.txt"))
+writeLines(basemod, file.path(tempdir(), "fullFranks.txt"))
 
 # Find and remove likelihood expressions for Pl and l, write
 rl = c(grep("GCLab[i, 1]*", basemod), grep("GCWab[i, 1]*", basemod))

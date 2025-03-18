@@ -12,14 +12,14 @@ d = read.xlsx("data/stomata-franks_zhang_2024_P1.0.xlsx", sheet = 1, startRow = 
 ## First w/o collapsing, single specimen interpretations
 data = parseFranks(d, FALSE)
 system.time({
-  post = jags.parallel(data, NULL, parms, "code/models/forwardFranksMulti.R", n.chains = 3,
+  post = jags.parallel(data, inits, parms, "code/models/forwardFranksMulti.R", n.chains = 3,
                        n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)
 })
 
 ## Now w/ collapsing
 data = parseFranks(d)
 system.time({
-  post.cl = jags.parallel(data, NULL, parms, "code/models/forwardFranksMulti.R", n.chains = 3,
+  post.cl = jags.parallel(data, inits, parms, "code/models/forwardFranksMulti.R", n.chains = 3,
                           n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)
 })
 
