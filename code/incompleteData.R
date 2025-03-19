@@ -4,7 +4,7 @@ source("code/helpers.R")
 source("code/models/testModels.R")
 
 # To save
-parms = c("Pl", "l", "amax.scale", "D", "gc.scale", "ca", "meso.scale",
+parms = c("Pl", "l", "amax.scale", "D", "SA", "ca", "meso.scale",
           "Ci0_m", "A0_m", "d13Ca_m", "A", "D13C", "gcop")
 
 # Test dataset

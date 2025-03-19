@@ -8,17 +8,17 @@ fb$Density_m2 = fb$Density_mm2 * 1e6
 ## um^2 to m^2
 fb$Size_m2 = fb$Size_microns / 1e12
 
-# Calculate pore length
-fb$Pl_m = sqrt(fb$Size_m2 / pi) * 2
+# Calculate GC length
+fb$GCL_m = sqrt(fb$Size_m2 / pi) * 2
 
 # Density plots
 ## Stomatal density
 plot(density(sqrt(fb$Density_m2), na.rm = TRUE))
 range(fb$Density_m2, na.rm = TRUE)
 
-## Stomatal pore length
-plot(density(fb$Pl_m, na.rm = TRUE))
-range(fb$Pl_m, na.rm = TRUE)
+## Stomatal GC length
+plot(density(fb$GCL_m, na.rm = TRUE))
+range(fb$GCL_m, na.rm = TRUE)
 
 ## Stomatal area
 plot(density(fb$Size_m2 * fb$Density_m2, na.rm = TRUE))
@@ -37,3 +37,8 @@ alpha = 2
 lines(density(rgamma(1e6, alpha, alpha / 25)), col = 2)
 legend("topright", legend = c("Data", "Model"), col = 1:2, lwd = 1)
 
+## Stomatal GC length, note 1e6 transformation for sampling efficiency
+plot(density(fb$GCL_m * 1e6, na.rm = TRUE, from = 0), main = "GC Length")
+alpha = 2
+lines(density(rgamma(1e6, alpha, alpha / 25)), col = 2)
+legend("topright", legend = c("Data", "Model"), col = 1:2, lwd = 1)

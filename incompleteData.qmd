@@ -33,11 +33,11 @@ parms = c("Pl", "l", "amax.scale", "D", "gc.scale", "ca", "meso.scale",
 
 ## Control and data quality
 
-Invert the full PSM using the test samples.
+Invert the full PSM using the test samples. These tests all use a version of the model that is parameterized in terms of `SA` and `GCL`, where the priors on these values are fit to the data from the Beerling and Franks compilation. These are scaled using a fixed `GCL/Pl` of 0.5 and used to calculate `D`.
 
 ```{r control}
 system.time({
-  control = jags.parallel(data, NULL, parms, file.path(tempdir(), "fullFranks.txt"), 
+  control = jags.parallel(data, inits, parms, file.path(tempdir(), "fullFranks.txt"), 
                           n.chains = 4, n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)
 })
 ```
@@ -49,7 +49,7 @@ data.sd = data
 data.sd$d13Cp[, 2] = rep(0.3)
 
 system.time({
-  realSD = jags.parallel(data.sd, NULL, parms, file.path(tempdir(), "fullFranks.txt"), 
+  realSD = jags.parallel(data.sd, inits, parms, file.path(tempdir(), "fullFranks.txt"), 
                           n.chains = 4, n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)
 })
 ```
@@ -69,9 +69,9 @@ points(control$BUGSoutput$summary[, "n.eff"], realSD$BUGSoutput$summary[, "n.eff
      pch = 21, bg = "goldenrod", cex = 2, lwd = 2)
 ```
 
-I've seen this before...if the data are overly prescribed it can make it more challenging for the MCMC algorithm to fully explore the parameter space. 
+I've seen this before...if the data are overly prescribed it can make it more challenging for the MCMC algorithm to fully explore the parameter space.
 
-The grey bands in the plot above are just for reference and show effective samples sizes < 100, for which we'd seriously start thinking about increasing the length of the chains. I've bumped up the iterations quite a bit so that both cases are reasonably well sampled, but you can see that we could decrease the chain length substantially and still get good sampling using the 'real' standard deviation values. In contrast we are marginal on some parameters using the original value of $\sigma$.
+The grey bands in the plot above are just for reference and show effective samples sizes \< 100, for which we'd seriously start thinking about increasing the length of the chains. I've bumped up the iterations quite a bit so that both cases are reasonably well sampled, but you can see that we could decrease the chain length substantially and still get good sampling using the 'real' standard deviation values. In contrast we are marginal on some parameters using the original value of $\sigma$.
 
 More to the point, though, here is a comparison between the posterior estimates of `ca`:
 
@@ -107,7 +107,7 @@ data.stomata = data.stomata[names(data.stomata) != "GCLab"]
 data.stomata = data.stomata[names(data.stomata) != "GCWab"]
 
 system.time({
-  stomata = jags.parallel(data.stomata, NULL, parms, file.path(tempdir(), "DonlyFranks.txt"), 
+  stomata = jags.parallel(data.stomata, inits, parms, file.path(tempdir(), "DonlyFranks.txt"), 
                           n.chains = 4, n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)
 })
 
@@ -129,15 +129,18 @@ legend(par("usr")[1] + 0.9 * diff(par("usr")[1:2]), par("usr")[3] + 0.9 * diff(p
        legend = c("All data", "D only"), lty = c(2, 1), lwd = 2, xjust = 1, bty = "n")
 ```
 
-Without any carbon isotope data to constrain the gas exchange, and without constraints on the other morphology parameters, we're basically sampling all possible parameter space, and end up with little to no information in our posterior. The maximum in the pdf at ~500 ppm is interesting and I can dig into it but I'm pretty sure this just represents the most common `ca` solution space when sampling freely across all of our parameter distributions. It is probably also be somewhat influenced by the choice to center the weakly informative $\delta^{13}C_p$ distribution using a discrimination value of -19 permil, which I chose because it's a fairly typical 'modern' value. But the main point is that we've lost all distinction between samples here and end up with a very broad posterior.
+Without any carbon isotope data to constrain the gas exchange, and without constraints on the other morphology parameters, we're basically sampling all possible parameter space, and end up with little to no information in our posterior. Given the relatively low `D` values for these samples the solution space emphasizes relatively high `ca` values, which make it easier to get to middle-of-the-road carbon isotope discrimination, but most of the information and are left with no distinction between samples.
 
 ## $\delta^{13}C_p$
 
-Finally, let's look at a case where we only have a carbon isotope measurement for the plant (or perhaps dispersed organic carbon...) and no morphological information.
+Finally, let's look at a case where we only have a carbon isotope measurement for the plant (or perhaps dispersed organic carbon...) and no morphological information. I'm going to artificially change one of the $\delta^{13}C_p$ values to a pretty low value (equivalent to a $\Delta$ value of 23 per mil) for demonstration purposes.
 
 ```{r d13C}
 data.d13C = data.sd
-data.d13C$d13Cp[5, 1] = -28.35
+
+## Big delta values in the data
+data.d13C$d13Ca - data.d13C$d13Cp
+data.d13C$d13Cp[5, 1] = data.d13C$d13Ca - 23
 
 ## Drop all morphological measurements
 data.d13C = data.d13C[names(data.d13C) != "Dab"]
@@ -145,14 +148,13 @@ data.d13C = data.d13C[names(data.d13C) != "GCLab"]
 data.d13C = data.d13C[names(data.d13C) != "GCWab"]
 
 system.time({
-  d13C = jags.parallel(data.d13C, NULL, parms, file.path(tempdir(), "d13ConlyFranks.txt"), 
+  d13C = jags.parallel(data.d13C, inits, parms, file.path(tempdir(), "d13ConlyFranks.txt"), 
                           n.chains = 4, n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)
 })
 
 ```
 
-
-
+Also very good sampling of the posterior here.
 
 ```{r d13C2}
 dens.d13C = apply(d13C$BUGSoutput$sims.list$ca, 2, density, from = 100, to = 8000)
@@ -167,3 +169,5 @@ for(i in seq_along(dens.realSD)){
 legend(par("usr")[1] + 0.9 * diff(par("usr")[1:2]), par("usr")[3] + 0.9 * diff(par("usr")[3:4]), 
        legend = c("All data", "C isotopes only"), lty = c(2, 1), lwd = 2, xjust = 1, bty = "n")
 ```
+
+Again, very broad posteriors here and relatively little differentiation between the samples. The mode in the `ca` posterior is shifted to fairly low values, in the 1000 - 1500 ppm range. This is probably because these samples are pretty 'normal' when it comes to their carbon isotope discrimination (19 - 21 per mil), and without knowing that they have unusually low `D` we are sampling across the full range of possibilities and there is an abundance of solution space at relatively low `ca` that works with the carbon isotope data. You can see that the posterior is shifted toward higher values, however, for samples with higher discrimination, including the first one in the data set (purple), which has a somewhat higher $\Delta$, and the one that I artificially modified to have $\Delta = 23$ permil (yellow). So there is a dependence here, and with $\delta^{13}C_p$ corresponding to higher (or lower) values of $\Delta$ exploring the same leaf geometry space will produce posteriors shifted toward higher (or lower, respectivley) `ca`.

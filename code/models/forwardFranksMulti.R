@@ -8,7 +8,7 @@ model {
     GCWab[i, 1] ~ dnorm(l[i] / s2_m[species[i]], 1 / GCWab[i, 2] ^ 2)
 
     # Geometry
-    Pl[i] = sqrt(SA[i] / D[i] / pi) * 2 
+#    Pl[i] = sqrt(SA[i] / D[i] / pi) * 2 
     
     # Franks model
     d13C_m[i] = d13Ca_m[level[i]] - D13C[i]
@@ -33,12 +33,20 @@ model {
     
     # Priors
     ## Individual
-    ### Stomatal area
-    SA[i] ~ dbeta(1.5, 20)
-    
     ### Stomatal density
-    D[i] = d[i] * 1e7
-    d[i] ~ dgamma(2, 2 / 25)
+    D[i] = SA[i] / (pi * (Pl[i] / 2) ^ 2)
+    
+    ### Stomatal area - this uses fixed GCL/PL scaling of 0.5 for now
+    SA[i] = SA_gc[i] * 0.5 ^ 2
+    SA_gc[i] ~ dbeta(1.5, 20)
+ 
+    ### Pore length - this uses fixed GCL/PL scaling of 0.5 for now
+    Pl[i] = gcl_m[i] * 0.5e-6
+    gcl_m[i] ~ dgamma(2, 2 / 25)
+       
+    ### Stomatal density
+#    D[i] = d[i] * 1e7
+#    d[i] ~ dgamma(2, 2 / 25)
 
     l[i] ~ dunif(1e-6, 1e-4)
 
