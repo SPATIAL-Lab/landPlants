@@ -33,7 +33,7 @@ parms = c("Pl", "l", "amax.scale", "D", "gc.scale", "ca", "meso.scale",
 
 ## Control and data quality
 
-Invert the full PSM using the test samples. These tests all use a version of the model that is parameterized in terms of `SA` and `GCL`, where the priors on these values are fit to the data from the Beerling and Franks compilation. These are scaled using a fixed `GCL/Pl` of 0.5 and used to calculate `D`.
+Invert the full PSM using the test samples. These tests all use a version of the model that is parameterized in terms of `SA` and `GCL`, where the priors on these values are fit to the data from the Beerling and Franks compilation. These are scaled using a fixed `Pl/GCL` of 0.5 and used to calculate `D`.
 
 ```{r control}
 system.time({
@@ -129,7 +129,7 @@ legend(par("usr")[1] + 0.9 * diff(par("usr")[1:2]), par("usr")[3] + 0.9 * diff(p
        legend = c("All data", "D only"), lty = c(2, 1), lwd = 2, xjust = 1, bty = "n")
 ```
 
-Without any carbon isotope data to constrain the gas exchange, and without constraints on the other morphology parameters, we're basically sampling all possible parameter space, and end up with little to no information in our posterior. Given the relatively low `D` values for these samples the solution space emphasizes relatively high `ca` values, which make it easier to get to middle-of-the-road carbon isotope discrimination, but most of the information and are left with no distinction between samples.
+Without any carbon isotope data to constrain the gas exchange, and without constraints on the other morphology parameters, we're basically sampling all possible parameter space, and end up a very weak constraint on `ca`. Given the relatively low `D` values for these samples the solution space emphasizes `ca` values above 2000 ppm, which make it easier to get middle-of-the-road carbon isotope discrimination with few stomates, but we have lost most of the information and are left with no distinction between samples.
 
 ## $\delta^{13}C_p$
 
@@ -139,8 +139,8 @@ Finally, let's look at a case where we only have a carbon isotope measurement fo
 data.d13C = data.sd
 
 ## Big delta values in the data
-data.d13C$d13Ca - data.d13C$d13Cp
-data.d13C$d13Cp[5, 1] = data.d13C$d13Ca - 23
+data.d13C$d13Ca[, 1] - data.d13C$d13Cp[, 1]
+data.d13C$d13Cp[5, 1] = data.d13C$d13Ca[5, 1] - 23
 
 ## Drop all morphological measurements
 data.d13C = data.d13C[names(data.d13C) != "Dab"]
@@ -154,7 +154,7 @@ system.time({
 
 ```
 
-Also very good sampling of the posterior here.
+Also very good sampling of the posterior, not shown.
 
 ```{r d13C2}
 dens.d13C = apply(d13C$BUGSoutput$sims.list$ca, 2, density, from = 100, to = 8000)

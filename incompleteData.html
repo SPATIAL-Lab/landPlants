@@ -148,7 +148,7 @@ window.Quarto = {
 </section>
 <section id="control-and-data-quality" class="level2">
 <h2 class="anchored" data-anchor-id="control-and-data-quality">Control and data quality</h2>
-<p>Invert the full PSM using the test samples. These tests all use a version of the model that is parameterized in terms of <code>SA</code> and <code>GCL</code>, where the priors on these values are fit to the data from the Beerling and Franks compilation. These are scaled using a fixed <code>GCL/Pl</code> of 0.5 and used to calculate <code>D</code>.</p>
+<p>Invert the full PSM using the test samples. These tests all use a version of the model that is parameterized in terms of <code>SA</code> and <code>GCL</code>, where the priors on these values are fit to the data from the Beerling and Franks compilation. These are scaled using a fixed <code>Pl/GCL</code> of 0.5 and used to calculate <code>D</code>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  control <span class="ot">=</span> <span class="fu">jags.parallel</span>(data, inits, parms, <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">"fullFranks.txt"</span>), </span>
@@ -156,7 +156,7 @@ window.Quarto = {
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-   0.08    0.08  306.41 </code></pre>
+   0.07    0.06  293.40 </code></pre>
 </div>
 </div>
 <p>I notice that the reported uncertainty in <span class="math inline">\(\delta^{13}C_{p}\)</span> values in the template is quite low…0.01 permil. I’m not sure where that comes from, but IMHO it’s not a realistic estimate of the precision with which a measurement of the fossil leaf tissue reflects the <span class="math inline">\(\delta^{13}C\)</span> of photosynthate produced by the ancient plant. Let’s compare the control result to that obtained using a somewhat more realistic 1 <span class="math inline">\(\sigma\)</span> value of 0.3 permil for all samples. </p>
@@ -170,7 +170,7 @@ window.Quarto = {
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-   0.17    0.02  326.09 </code></pre>
+   0.08    0.04  308.37 </code></pre>
 </div>
 </div>
 <p>First, the posterior distributions are better sampled in this case:</p>
@@ -238,7 +238,7 @@ window.Quarto = {
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-   0.25    0.00  301.92 </code></pre>
+   0.09    0.07  291.47 </code></pre>
 </div>
 </div>
 <p>I won’t show it, but the posterior is very well sampled here. Let’s compare ca with what we got using the ‘real’ standard deviation values above.</p>
@@ -262,7 +262,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>Without any carbon isotope data to constrain the gas exchange, and without constraints on the other morphology parameters, we’re basically sampling all possible parameter space, and end up with little to no information in our posterior. Given the relatively low <code>D</code> values for these samples the solution space emphasizes relatively high <code>ca</code> values, which make it easier to get to middle-of-the-road carbon isotope discrimination, but most of the information and are left with no distinction between samples.</p>
+<p>Without any carbon isotope data to constrain the gas exchange, and without constraints on the other morphology parameters, we’re basically sampling all possible parameter space, and end up a very weak constraint on <code>ca</code>. Given the relatively low <code>D</code> values for these samples the solution space emphasizes <code>ca</code> values above 2000 ppm, which make it easier to get middle-of-the-road carbon isotope discrimination with few stomates, but we have lost most of the information and are left with no distinction between samples.</p>
 </section>
 <section id="delta13c_p" class="level2">
 <h2 class="anchored" data-anchor-id="delta13c_p"><span class="math inline">\(\delta^{13}C_p\)</span></h2>
@@ -271,55 +271,39 @@ window.Quarto = {
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>data.d13C <span class="ot">=</span> data.sd</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Big delta values in the data</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>data.d13C<span class="sc">$</span>d13Ca <span class="sc">-</span> data.d13C<span class="sc">$</span>d13Cp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>data.d13C<span class="sc">$</span>d13Ca[, <span class="dv">1</span>] <span class="sc">-</span> data.d13C<span class="sc">$</span>d13Cp[, <span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  d13Ca ed13Ca
-4 20.75    0.3
-5 19.25    0.3
-6 19.42    0.3
-7 19.60    0.3
-8 18.85    0.3</code></pre>
+<pre><code>[1] 20.75 19.25 19.42 19.60 18.85</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>data.d13C<span class="sc">$</span>d13Cp[<span class="dv">5</span>, <span class="dv">1</span>] <span class="ot">=</span> data.d13C<span class="sc">$</span>d13Ca <span class="sc">-</span> <span class="dv">23</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in `[&lt;-.data.frame`(`*tmp*`, 5, 1, value = structure(list(d13Cp =
-c(-26.25, : replacement element 1 has 5 rows to replace 1 rows</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in `[&lt;-.data.frame`(`*tmp*`, 5, 1, value = structure(list(d13Cp =
-c(-26.25, : replacement element 2 has 5 rows to replace 1 rows</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in `[&lt;-.data.frame`(`*tmp*`, 5, 1, value = structure(list(d13Cp =
-c(-26.25, : provided 2 variables to replace 1 variables</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Drop all morphological measurements</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>data.d13C <span class="ot">=</span> data.d13C[<span class="fu">names</span>(data.d13C) <span class="sc">!=</span> <span class="st">"Dab"</span>]</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>data.d13C <span class="ot">=</span> data.d13C[<span class="fu">names</span>(data.d13C) <span class="sc">!=</span> <span class="st">"GCLab"</span>]</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>data.d13C <span class="ot">=</span> data.d13C[<span class="fu">names</span>(data.d13C) <span class="sc">!=</span> <span class="st">"GCWab"</span>]</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  d13C <span class="ot">=</span> <span class="fu">jags.parallel</span>(data.d13C, inits, parms, <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">"d13ConlyFranks.txt"</span>), </span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>                          <span class="at">n.chains =</span> <span class="dv">4</span>, <span class="at">n.iter =</span> <span class="fl">2e6</span>, <span class="at">n.burnin =</span> <span class="fl">1e4</span>, <span class="at">n.thin =</span> <span class="fl">1e3</span>)</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>data.d13C<span class="sc">$</span>d13Cp[<span class="dv">5</span>, <span class="dv">1</span>] <span class="ot">=</span> data.d13C<span class="sc">$</span>d13Ca[<span class="dv">5</span>, <span class="dv">1</span>] <span class="sc">-</span> <span class="dv">23</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Drop all morphological measurements</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>data.d13C <span class="ot">=</span> data.d13C[<span class="fu">names</span>(data.d13C) <span class="sc">!=</span> <span class="st">"Dab"</span>]</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>data.d13C <span class="ot">=</span> data.d13C[<span class="fu">names</span>(data.d13C) <span class="sc">!=</span> <span class="st">"GCLab"</span>]</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>data.d13C <span class="ot">=</span> data.d13C[<span class="fu">names</span>(data.d13C) <span class="sc">!=</span> <span class="st">"GCWab"</span>]</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  d13C <span class="ot">=</span> <span class="fu">jags.parallel</span>(data.d13C, inits, parms, <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">"d13ConlyFranks.txt"</span>), </span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>                          <span class="at">n.chains =</span> <span class="dv">4</span>, <span class="at">n.iter =</span> <span class="fl">2e6</span>, <span class="at">n.burnin =</span> <span class="fl">1e4</span>, <span class="at">n.thin =</span> <span class="fl">1e3</span>)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-   0.17    0.03  267.85 </code></pre>
+   0.11    0.02  257.08 </code></pre>
 </div>
 </div>
-<p>Also very good sampling of the posterior here.</p>
+<p>Also very good sampling of the posterior, not shown.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>dens.d13C <span class="ot">=</span> <span class="fu">apply</span>(d13C<span class="sc">$</span>BUGSoutput<span class="sc">$</span>sims.list<span class="sc">$</span>ca, <span class="dv">2</span>, density, <span class="at">from =</span> <span class="dv">100</span>, <span class="at">to =</span> <span class="dv">8000</span>)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">1</span>, <span class="dv">1</span>))</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="at">type =</span> <span class="st">"n"</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">8000</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">8e-4</span>), <span class="at">xlab =</span> <span class="st">"ca (ppm)"</span>,</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Density"</span>)</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">=</span> <span class="fu">viridis</span>(<span class="dv">5</span>)</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">seq_along</span>(dens.realSD)){</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lines</span>(dens.realSD[[i]], <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> cols[i], <span class="at">lty =</span> <span class="dv">2</span>)</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lines</span>(dens.d13C[[i]], <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> cols[i])</span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="fu">par</span>(<span class="st">"usr"</span>)[<span class="dv">1</span>] <span class="sc">+</span> <span class="fl">0.9</span> <span class="sc">*</span> <span class="fu">diff</span>(<span class="fu">par</span>(<span class="st">"usr"</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]), <span class="fu">par</span>(<span class="st">"usr"</span>)[<span class="dv">3</span>] <span class="sc">+</span> <span class="fl">0.9</span> <span class="sc">*</span> <span class="fu">diff</span>(<span class="fu">par</span>(<span class="st">"usr"</span>)[<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>]), </span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"All data"</span>, <span class="st">"C isotopes only"</span>), <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>), <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">xjust =</span> <span class="dv">1</span>, <span class="at">bty =</span> <span class="st">"n"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>dens.d13C <span class="ot">=</span> <span class="fu">apply</span>(d13C<span class="sc">$</span>BUGSoutput<span class="sc">$</span>sims.list<span class="sc">$</span>ca, <span class="dv">2</span>, density, <span class="at">from =</span> <span class="dv">100</span>, <span class="at">to =</span> <span class="dv">8000</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="at">type =</span> <span class="st">"n"</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">8000</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">8e-4</span>), <span class="at">xlab =</span> <span class="st">"ca (ppm)"</span>,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Density"</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">=</span> <span class="fu">viridis</span>(<span class="dv">5</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">seq_along</span>(dens.realSD)){</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lines</span>(dens.realSD[[i]], <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> cols[i], <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lines</span>(dens.d13C[[i]], <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> cols[i])</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="fu">par</span>(<span class="st">"usr"</span>)[<span class="dv">1</span>] <span class="sc">+</span> <span class="fl">0.9</span> <span class="sc">*</span> <span class="fu">diff</span>(<span class="fu">par</span>(<span class="st">"usr"</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]), <span class="fu">par</span>(<span class="st">"usr"</span>)[<span class="dv">3</span>] <span class="sc">+</span> <span class="fl">0.9</span> <span class="sc">*</span> <span class="fu">diff</span>(<span class="fu">par</span>(<span class="st">"usr"</span>)[<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>]), </span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"All data"</span>, <span class="st">"C isotopes only"</span>), <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>), <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">xjust =</span> <span class="dv">1</span>, <span class="at">bty =</span> <span class="st">"n"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">

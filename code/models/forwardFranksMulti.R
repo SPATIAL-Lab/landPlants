@@ -31,31 +31,27 @@ model {
     gcmax[i] = (d.v * D[i] * amax[i]) / (l[i] + ((pi / 2) * sqrt(amax[i] / pi))) / 1.6
     amax[i] = SA[i] * amax.scale[species[i]] / D[i] 
     
-    # Priors
-    ## Individual
-    ### Stomatal density
+    # Individual priors
+    ## Stomatal density
     D[i] = SA[i] / (pi * (Pl[i] / 2) ^ 2)
     
-    ### Stomatal area - this uses fixed GCL/PL scaling of 0.5 for now
+    ## Stomatal pore area - this uses fixed GCL/PL scaling of 0.5 for now
     SA[i] = SA_gc[i] * 0.5 ^ 2
     SA_gc[i] ~ dbeta(1.5, 20)
  
-    ### Pore length - this uses fixed GCL/PL scaling of 0.5 for now
+    ## Pore length - this uses fixed GCL/PL scaling of 0.5 for now
     Pl[i] = gcl_m[i] * 0.5e-6
-    gcl_m[i] ~ dgamma(2, 2 / 25)
-       
-    ### Stomatal density
-#    D[i] = d[i] * 1e7
-#    d[i] ~ dgamma(2, 2 / 25)
-
+    gcl_m[i] ~ dgamma(2, 0.08)
+    
+    ## Pore depth   
     l[i] ~ dunif(1e-6, 1e-4)
 
+    ## Pl to obs scaling
     s1_m[i] ~ dgamma(s1[i, 1] * s1.beta[i], s1.beta[i])
     s1.beta[i] = s1[i, 1] / s1[i, 2] ^ 2
-    
   }
   
-  ## Taxon
+  # Taxon priors
   for(i in 1:length(gb[, 1])){
     s2_m[i] ~ dgamma(s2[i, 1] * s2.beta[i], s2.beta[i])
     s2.beta[i] = s2[i, 1] / s2[i, 2] ^ 2
@@ -79,7 +75,7 @@ model {
     gb.beta[i] = gb[i, 1] / gb[i, 2] ^ 2
   }
 
-  ## Locality
+  # Strat level priors
   for(i in 1:length(d13Ca[, 1])){
     ca[i] = ca.s[i] * 1e3
     ca.s[i] ~ dunif(0.1, 8)
