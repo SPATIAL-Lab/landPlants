@@ -1,6 +1,80 @@
 model {
   
-  for(i in 1:length(d13Cp[, 1])){
+  # Adaxial species --- how to deal with zero length???
+  ## need indirect indexing...
+  for(i in 1:length(ind.ad)){
+    # Likelihood ----
+    d13Cp[i, 1] ~ dnorm(d13C_m[i], 1 / d13Cp[i, 2] ^ 2)
+    Dab[i, 1] ~ dnorm(D.ab[i], 1 / Dab[i, 2] ^ 2)
+    GCLab[i, 1] ~ dnorm(Pl.ab[i] / s1_m[i], 1 / GCLab[i, 2] ^ 2)
+    GCWab[i, 1] ~ dnorm(l.ab[i] / s2_m[species[i]], 1 / GCWab[i, 2] ^ 2)
+    Dad[i, 1] ~ dnorm(D.ad[i], 1 / Dad[i, 2] ^ 2)
+    GCLad[i, 1] ~ dnorm(Pl.ad[i] / s1_m[i], 1 / GCLad[i, 2] ^ 2)
+    GCWad[i, 1] ~ dnorm(l.ad[i] / s2_m[species[i]], 1 / GCWad[i, 2] ^ 2)
+    
+    ## Pl to obs scaling
+    s1_m[i] ~ dgamma(s1[i, 1] * s1.beta[i], s1.beta[i])
+    s1.beta[i] = s1[i, 1] / s1[i, 2] ^ 2
+    
+    # Franks model
+    d13C_m[i] = d13Ca_m[level[i]] - D13C[i]
+    D13C[i] = a + (b[i] - a) * ci[i] / ca[level[i]]
+    ci[i] = ca[level[i]] - A[i] / gcop[i] - 1 / meso.scale[species[i]]
+    
+    ## Based on data I've seen A should have noise added
+    A[i] = (-q.b[i] - sqrt(q.b[i] ^ 2 - 4 * q.a[i] * q.c[i])) / (2 * q.a[i])
+    
+    q.a[i] = 1 / gcop[i] * (Ci0_m[species[i]] - gamma[i])
+    q.b[i] = gamma[i] * (-2 * A0_m[species[i]] / gcop[i] + ca[level[i]] - 1 / meso.scale[species[i]] - 
+                           2 * Ci0_m[species[i]] + 2 * gamma[i]) + 
+      Ci0_m[species[i]] * (-A0_m[species[i]] / gcop[i] - ca[level[i]] + 1 / meso.scale[species[i]])
+    q.c[i] = A0_m[species[i]] * (gamma[i] * (2 * ca[level[i]] - 2 / meso.scale[species[i]] - 
+                                               Ci0_m[species[i]] - 2 * gamma[i]) +
+                                   Ci0_m[species[i]] * (ca[level[i]] - 1 / meso.scale[species[i]]))
+    
+    # Stomatal conductance ----
+    # Individual level
+    gcop[i] = (1 / gcop.g.ab[i] + 1 / gb_m[species[i]]) ^ -1 + 
+      (1 / gcop.g.ad[i] + 1 / gb_m[species[i]]) ^ -1
+    
+    gcop.g.ab[i] = gcmax.ab[i] * gc.scale[species[i]]
+    gcop.g.ad[i] = gcmax.ad[i] * gc.scale[species[i]]
+    
+    gcmax.ab[i] = (d.v * D.ab[i] * amax.ab[i]) / 
+      (l.ab[i] + ((pi / 2) * sqrt(amax.ab[i] / pi))) / 1.6
+    gcmax.ad[i] = (d.v * D.ad[i] * amax.ad[i]) / 
+      (l.ad[i] + ((pi / 2) * sqrt(amax.ad[i] / pi))) / 1.6
+    
+    amax.ab[i] = SA.ab[i] * amax.scale[species[i]] / D.ab[i] 
+    amax.ad[i] = SA.ad[i] * amax.scale[species[i]] / D.ad[i] 
+    
+    # Stomatal geometry calculations ----
+    # Individual level
+    ## Stomatal density
+    D.ab[i] = SA.ab[i] / (pi * (Pl.ab[i] / 2) ^ 2)
+    D.ad[i] = SA.ad[i] / (pi * (Pl.ad[i] / 2) ^ 2)
+    
+    ## Stomatal pore area - this uses fixed GCL/PL scaling of 0.5 for now
+    SA.ab[i] = SA_gc.ab[i] * 0.5 ^ 2
+    SA.ad[i] = SA_gc.ad[i] * 0.5 ^ 2
+    
+    SA_gc.ab[i] ~ dbeta(1.5, 20)
+    SA_gc.ad[i] ~ dbeta(1.5, 20)
+    
+    ## Pore length - this uses fixed GCL/PL scaling of 0.5 for now
+    Pl.ab[i] = gcl_m.ab[i] * 0.5e-6
+    Pl.ad[i] = gcl_m.ad[i] * 0.5e-6
+    
+    gcl_m.ab[i] ~ dgamma(2, 0.08)
+    gcl_m.ad[i] ~ dgamma(2, 0.08)
+    
+    ## Pore depth   
+    l.ab[i] ~ dunif(1e-6, 1e-4)
+    l.ad[i] ~ dunif(1e-6, 1e-4)
+  }
+  
+  # Abaxial species --- how to deal with zero length???
+  for(i in 1:length(ind.ab)){
     # Likelihood ----
     d13Cp[i, 1] ~ dnorm(d13C_m[i], 1 / d13Cp[i, 2] ^ 2)
     Dab[i, 1] ~ dnorm(D[i], 1 / Dab[i, 2] ^ 2)
