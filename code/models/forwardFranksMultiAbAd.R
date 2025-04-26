@@ -1,8 +1,7 @@
 model {
   
   # Adaxial species --- how to deal with zero length???
-  ## need indirect indexing...
-  for(i in 1:length(ind.ad)){
+  for(i in ind.ad){
     # Likelihood ----
     d13Cp[i, 1] ~ dnorm(d13C_m[i], 1 / d13Cp[i, 2] ^ 2)
     Dab[i, 1] ~ dnorm(D.ab[i], 1 / Dab[i, 2] ^ 2)
@@ -25,12 +24,16 @@ model {
     A[i] = (-q.b[i] - sqrt(q.b[i] ^ 2 - 4 * q.a[i] * q.c[i])) / (2 * q.a[i])
     
     q.a[i] = 1 / gcop[i] * (Ci0_m[species[i]] - gamma[i])
-    q.b[i] = gamma[i] * (-2 * A0_m[species[i]] / gcop[i] + ca[level[i]] - 1 / meso.scale[species[i]] - 
+    q.b[i] = gamma[i] * (-2 * A0_m[species[i]] / gcop[i] + ca[level[i]] - 
+                              1 / meso.scale[species[i]] - 
                            2 * Ci0_m[species[i]] + 2 * gamma[i]) + 
-      Ci0_m[species[i]] * (-A0_m[species[i]] / gcop[i] - ca[level[i]] + 1 / meso.scale[species[i]])
-    q.c[i] = A0_m[species[i]] * (gamma[i] * (2 * ca[level[i]] - 2 / meso.scale[species[i]] - 
+      Ci0_m[species[i]] * (-A0_m[species[i]] / gcop[i] - ca[level[i]] + 
+                             1 / meso.scale[species[i]])
+    q.c[i] = A0_m[species[i]] * (gamma[i] * (2 * ca[level[i]] - 
+                                                     2 / meso.scale[species[i]] - 
                                                Ci0_m[species[i]] - 2 * gamma[i]) +
-                                   Ci0_m[species[i]] * (ca[level[i]] - 1 / meso.scale[species[i]]))
+                                   Ci0_m[species[i]] * 
+                                     (ca[level[i]] - 1 / meso.scale[species[i]]))
     
     # Stomatal conductance ----
     # Individual level
@@ -74,7 +77,7 @@ model {
   }
   
   # Abaxial species --- how to deal with zero length???
-  for(i in 1:length(ind.ab)){
+  for(i in ind.ab){
     # Likelihood ----
     d13Cp[i, 1] ~ dnorm(d13C_m[i], 1 / d13Cp[i, 2] ^ 2)
     Dab[i, 1] ~ dnorm(D[i], 1 / Dab[i, 2] ^ 2)
@@ -94,12 +97,16 @@ model {
     A[i] = (-q.b[i] - sqrt(q.b[i] ^ 2 - 4 * q.a[i] * q.c[i])) / (2 * q.a[i])
     
     q.a[i] = 1 / gcop[i] * (Ci0_m[species[i]] - gamma[i])
-    q.b[i] = gamma[i] * (-2 * A0_m[species[i]] / gcop[i] + ca[level[i]] - 1 / meso.scale[species[i]] - 
-                           2 * Ci0_m[species[i]] + 2 * gamma[i]) + 
-      Ci0_m[species[i]] * (-A0_m[species[i]] / gcop[i] - ca[level[i]] + 1 / meso.scale[species[i]])
-    q.c[i] = A0_m[species[i]] * (gamma[i] * (2 * ca[level[i]] - 2 / meso.scale[species[i]] - 
-                                      Ci0_m[species[i]] - 2 * gamma[i]) +
-                          Ci0_m[species[i]] * (ca[level[i]] - 1 / meso.scale[species[i]]))
+    q.b[i] = gamma[i] * (-2 * A0_m[species[i]] / gcop[i] + ca[level[i]] - 
+                              1 / meso.scale[species[i]] - 
+                              2 * Ci0_m[species[i]] + 2 * gamma[i]) + 
+      Ci0_m[species[i]] * (-A0_m[species[i]] / gcop[i] - ca[level[i]] + 
+                             1 / meso.scale[species[i]])
+    q.c[i] = A0_m[species[i]] * (gamma[i] * (2 * ca[level[i]] - 
+                                                     2 / meso.scale[species[i]] - 
+                                                     Ci0_m[species[i]] - 2 * gamma[i]) +
+                                      Ci0_m[species[i]] * 
+                                      (ca[level[i]] - 1 / meso.scale[species[i]]))
     
     # Stomatal conductance ----
     # Individual level

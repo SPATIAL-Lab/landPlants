@@ -1,13 +1,14 @@
 parseFranks = function(d, condense = TRUE){
-  ## Parse values from sheet, obs, parameters, constants
+  # Parse values from sheet, obs, parameters, constants
 
-  ## Drop aggregate estimate rows based on missing stomatal density
+  # Drop aggregate estimate rows based on missing stomatal density
   d = d[!is.na(d$Dab), ]
   
   data = list()
   
-  data.names = c("d13Cp", "Dab", "GCLab", "GCWab")
-  data.sd = c(0.2, 1.5e5, 3e-7, 1.5e-7)
+  # Data obs 
+  data.names = c("d13Cp", "Dab", "GCLab", "GCWab", "Dad", "GCLad", "GCWad")
+  data.sd = c(0.2, 1.5e5, 3e-7, 1.5e-7, 1.5e5, 3e-7, 1.5e-7)
   
   for(i in seq_along(data.names)){
     ci = match(data.names[i], names(d))
@@ -17,9 +18,10 @@ parseFranks = function(d, condense = TRUE){
     data[[i]] = d.sub
   }
   
+  # Free parameters
   mp.names = c("d13Ca", "A0", "CiCa0", "gb", "s1", "s2", "s3",
                "s4", "s5")
-  mp.sd = c(0.5, 0.25, 0.05, 0.05, 0.05, 0.05, 0.025, 0.01, 0.001)
+  mp.sd = c(0.5, 0.25, 0.05, 0.05, 0.001, 0.05, 0.01, 0.01, 0.001)
   
   for(i in seq_along(mp.names)){
     ci = match(mp.names[i], names(d))
@@ -31,22 +33,29 @@ parseFranks = function(d, condense = TRUE){
     } else{
       d.sub[d.sub[, 2] == 0, 2] = mp.sd[i]
     }
-    data[[i + 4]] = d.sub
+    data[[i + 7]] = d.sub
   }
   
+  # Fixed parameters
   c.names = c("CO2_0", "b", "gamma")
   for(i in seq_along(c.names)){
     ci = match(c.names[i], names(d))
     d.sub = d[, ci]
-    data[[i + 13]] = d.sub
+    data[[i + 16]] = d.sub
   }
   
   names(data) = c(data.names, mp.names, c.names)
   
+  # Abaxial adaxial indicies
+  data$ind.ab = which(data$Dad$Dad == 0)
+  data$ind.ad = which(data$Dad$Dad != 0)
+  
+  # Transform CiCa0
   data$Ci0 = data$CiCa0 * data$CO2_0
   names(data$Ci0) = c("Ci0", "eCi0")
   data = data[!(names(data) %in% c("CiCa0", "CO2_0"))]
   
+  # Condense sites and taxa
   if(condense){
     ## Sites index
     ci = match("Stratigraphic.Level", names(d))
@@ -83,3 +92,26 @@ parseFranks = function(d, condense = TRUE){
 inits = function() {
   list("ca.s" = runif(length(d13Ca[, 1]), 0.5, 2))  
 }  
+
+prepMod = function(data){
+  # Read base model
+  basemod = readLines("code/models/forwardFranksMultiAbAd.R")
+  
+  # Find lines
+  ad.fl = grep("# Adaxial species", basemod)
+  ab.fl = grep("# Abaxial species", basemod)
+  ad.ll = ab.fl - 1
+  ab.ll = grep("# Taxon priors", basemod)
+  
+  # Remove unneeded code
+  if(length(data$ind.ab) == 0){
+    mod = basemod[-c(ab.fl:ab.ll)]
+  } else if(length(data$ind.ad) == 0){
+    mod = basemod[-c(ad.fl:ad.ll)]
+  } else{
+    mod = basemod
+  }
+  
+  # Write
+  writeLines(mod, file.path(tempdir(), "model.txt"))
+}
