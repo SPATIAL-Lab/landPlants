@@ -1,4 +1,4 @@
-parseFranks = function(d, condense = TRUE){
+parseFranks = function(d, condense = TRUE, fixA = FALSE){
   # Parse values from sheet, obs, parameters, constants
 
   # Drop aggregate estimate rows based on missing stomatal density
@@ -76,7 +76,9 @@ parseFranks = function(d, condense = TRUE){
     ### First occurrence of each species
     fo = match(species, gs)
     data$gb = data$gb[fo, ]
-    data$A0 = data$A0[fo, ]
+    if(fixA == FALSE){
+      data$A0 = data$A0[fo, ]
+    }
     data$Ci0 = data$Ci0[fo, ]
     data$s5 = data$s5[fo, ]
     data$s4 = data$s4[fo, ]
@@ -96,6 +98,29 @@ inits = function() {
 prepMod = function(data){
   # Read base model
   basemod = readLines("code/models/forwardFranksMultiAbAd.R")
+  
+  # Find lines
+  ad.fl = grep("# Adaxial species", basemod)
+  ab.fl = grep("# Abaxial species", basemod)
+  ad.ll = ab.fl - 1
+  ab.ll = grep("# Taxon priors", basemod)
+  
+  # Remove unneeded code
+  if(length(data$ind.ab) == 0){
+    mod = basemod[-c(ab.fl:ab.ll)]
+  } else if(length(data$ind.ad) == 0){
+    mod = basemod[-c(ad.fl:ad.ll)]
+  } else{
+    mod = basemod
+  }
+  
+  # Write
+  writeLines(mod, file.path(tempdir(), "model.txt"))
+}
+
+prepMod.fixA = function(data){
+  # Read base model
+  basemod = readLines("code/models/forwardFranksMultiAbAd_fixA.R")
   
   # Find lines
   ad.fl = grep("# Adaxial species", basemod)

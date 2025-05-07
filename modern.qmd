@@ -18,7 +18,7 @@ parms = c("Pl", "l", "amax.scale", "D", "gc.scale", "ca", "meso.scale",
           "Ci0_m", "A0_m", "d13Ca_m", "A", "D13C", "gcop")
 ```
 
-Load data and subset.
+Load data.
 
 ```{r data}
 d = read.xlsx("data/stomata-franks_modernTests.xlsx", sheet = 1, startRow = 3)
@@ -35,8 +35,19 @@ plot(density(s3.synth, from = 0, to = 1))
 d$s3[d$s3 == 1] = mu
 ```
 
+We also need to deal with values of `A0`, which are a species-level parameter in the forward model. I'll average the values measured for each species/CO2 combo to get values we can treat as ~equivalent the the `A0` values we'll use for paleo data.
+
+```{r A0}
+treats = unique(d$Sample.Name)
+for(i in seq_along(treats)){
+  a.mean = mean(d$A0[d$Sample.Name == treats[i]])
+  d$A0[d$Sample.Name == treats[i]] = rep(a.mean)
+}
+```
+
+Now subset the data by treatment.
+
 ```{r subset}
-d = read.xlsx("data/stomata-franks_modernTests.xlsx", sheet = 1, startRow = 3)
 d.green.500 = d[d$Stratigraphic.Level == 500,]
 d.green.1k = d[d$Stratigraphic.Level == 1000,]
 d.field = d[d$Stratigraphic.Level == 400,]
@@ -140,7 +151,37 @@ points(d.green.1k.g[[i]]$A0, post.1k[[i]]$BUGSoutput$median$A, pch = 21,
 abline(0, 1)
 ```
 
-May need more digging as to the mechanics here, but `A` is collapsing to nearly identical values in the two experiments for **Stenochlaena**, whereas the difference between experimental treatments for `A` is actually larger than that for `A0` for for **Cedrus**. Since the posterior estimates of `ca` and `A` are closely linked that's not too surprising, but this shows that `A` is adjusting in the analysis which accounts for the difference in these results relative to the traditional ones that used a prescribed distribution for `A`. 
+I may need to do more digging as to the mechanics here, but `A` is collapsing to nearly identical values in the two experiments for **Stenochlaena**, whereas the difference between experimental treatments for `A` is actually larger than that for `A0` for for **Cedrus**. Since the posterior estimates of `ca` and `A` are closely linked that's not too surprising, but this shows that `A` is adjusting in the analysis which accounts for the difference in these results relative to the traditional ones that used a prescribed distribution for `A`.
+
+Can we run an experiment that more closely reflects the traditional interpretations? Here's a version of the model which fixes `A`.
+
+```{r}
+# Reprep the data, keeping reported A values
+d.fA = read.xlsx("data/stomata-franks_modernTests.xlsx", sheet = 1, startRow = 3)
+d.fA$s3[d$s3 == 1] = mu
+d.green.500.fA = d.fA[d.fA$Stratigraphic.Level == 500,]
+d.green.1k.fA = d.fA[d.fA$Stratigraphic.Level == 1000,]
+d.green.500.g.fA = d.green.1k.g.fA = list()
+for(i in seq_along(gen)){
+  d.green.500.g.fA[[i]] = d.green.500.fA[d.green.500.fA$Genus == gen[i],]
+  d.green.1k.g.fA[[i]] = d.green.1k.fA[d.green.1k.fA$Genus == gen[i],]
+}
+
+post.500.fA = post.1k.fA = list()
+for(i in seq_along(gen)){
+  data = parseFranks(d.green.500.g.fA[[i]], fixA = TRUE)
+  prepMod.fixA(data)
+  post.500.fA[[i]] = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
+                       n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
+
+  data = parseFranks(d.green.1k.g.fA[[i]])
+  prepMod.fixA(data)
+  post.1k.fA[[i]] = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
+                       n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
+}
+```
+
+
 
 Let's take one more look at this, plotting the same comparison but using the posterior values of `A` from the multi-species inversion.
 
