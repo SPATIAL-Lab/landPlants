@@ -137,7 +137,7 @@ model {
     s2_m[i] ~ dgamma(s2[i, 1] * s2.beta[i], s2.beta[i])
     s2.beta[i] = s2[i, 1] / s2[i, 2] ^ 2
     
-    amax.scale[i] ~ dbeta(s3[i, 1] * amax.v[i], (1 - s3[i, 1]) * amax.v[i]) # aka s3
+    amax.scale[i] ~ dbeta(s3[i, 1] * amax.v[i], (1 - s3[i, 1]) * amax.v[i]) I (0.0001, 0.9999) # aka s3
     amax.v[i] = (s3[i, 1] * (1 - s3[i, 1])) / s3[i, 2] ^ 2 - 1
     
     gc.scale[i] ~ dbeta(s4[i, 1] * gc.v[i], (1 - s4[i, 1]) * gc.v[i]) # aka s4
