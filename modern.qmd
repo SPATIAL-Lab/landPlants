@@ -1,12 +1,14 @@
 ---
-title: "modern"
+title: "Franks PSM modern tests"
 format: html
 editor: source
+fig-width: 4
+fig-height: 4
 ---
 
 ## Setup
 
-Load packages and functions and export model versions for use.
+Some preliminaries.
 
 ```{r setup}
 #| output: false
@@ -24,18 +26,21 @@ Load data.
 d = read.xlsx("data/stomata-franks_modernTests.xlsx", sheet = 1, startRow = 3)
 ```
 
-Deal with the samples for which s3 is reported as 1. This shows the distribution used.
+Deal with a statistical enigma in the data set...this shows the distribution used for samples where the mean value for s3 is reported as 1.
 
 ```{r s3}
 mu = 0.97
 sigma = 0.05
+d$s3[d$s3 == 1] = mu
+
 s3.v = (mu * (1 - mu)) / sigma ^ 2 - 1
 s3.synth = rbeta(1e6, mu * s3.v, (1 - mu) * s3.v)
-plot(density(s3.synth, from = 0, to = 1))
-d$s3[d$s3 == 1] = mu
+par(mar = c(5, 5, 1, 1))
+plot(density(s3.synth, from = 0, to = 1), main = "", xlab = "s3", lwd = 4,
+     xaxs = "i", yaxs = "i")
 ```
 
-We also need to deal with values of `A0`, which are a species-level parameter in the forward model. I'll average the values measured for each species/CO2 combo to get values we can treat as ~equivalent the the `A0` values we'll use for paleo data.
+We also need to deal with values of `A0`, which are a species-level parameter in the forward model. I'll average the values measured for each species + CO~2~ combo to get values we can treat as ~equivalent the the `A0` values we'll use for paleo data.
 
 ```{r A0}
 treats = unique(d$Sample.Name)
@@ -55,6 +60,8 @@ d.field = d[d$Stratigraphic.Level == 400,]
 
 ## Greenhouse experiments
 
+### Per treatment
+
 First we will work with the greenhouse data and run separate inversions for each species. Prep these subsets.
 
 ```{r green}
@@ -66,7 +73,7 @@ for(i in seq_along(gen)){
 }
 ```
 
-Now run the inversions.
+Now run the inversions. This is the exact same model used for Xiaoqing's data with the exception of added math to propagate the conductivity for adaxial species where needed. The model is running using `A0` and `CiCa0` as the anchor points for the Franks equations for `A`, so assimilation is a free parameter and varies with `ca`. We are using the hierarchical model, so a single posterior sample is obtained for the site- (here equal to experimental treatment) and species-level parameters, and these apply to all individual samples of that species in that experimental treatment.
 
 ```{r byGenus}
 post.500 = post.1k = list()
@@ -83,22 +90,23 @@ for(i in seq_along(gen)){
 }
 ```
 
-Let's add a multi-species inversion for each CO2 level.
+Let's add a multi-species inversion for each CO~2~ treatment. Here we are applying a single value of `ca` and `d13Ca` across all taxa and samples in a given experimental treatment and a single set of species-level parameters for each species in the treatment.
 
 ```{r byLevel}
 data = parseFranks(d.green.500)
 prepMod(data)
 post.500[[4]] = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
-                       n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
+                              n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
 
 data = parseFranks(d.green.1k)
 prepMod(data)
 post.1k[[4]] = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
-                       n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
+                             n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
 ```
 
-Plot it up.
+Plot it up, with the published interpretations from [Milligan et al. 2019](https://doi.org/10.1029/2018GL081215) shown on the right for comparison.
 
+::: {layout-ncol=2}
 ```{r greenPlot}
 dens.500 = dens.1k = list()
 for(i in 1:4){
@@ -106,10 +114,10 @@ for(i in 1:4){
   dens.1k[[i]] = density(post.1k[[i]]$BUGSoutput$sims.list$ca)
 }
 
-par(mar = c(3, 5, 1, 1))
+par(mar = c(1, 5, 3, 1))
 plot(0, 0, type = "n", xlim = c(0.018, 0), ylim = c(log(300), log(3000)), axes = FALSE,
-     xlab = "", ylab = expression("Atmospheric CO"[2]*" (ppm)"))
-abline(h = log(500), lty = 2, lwd = 2)
+     xlab = "", ylab = expression("Atmospheric CO"[2]*" (ppm)"), xaxs = "i", yaxs = "i")
+abline(h = log(500), lty = 2, lwd = 2, col = "grey")
 abline(h = log(1000), lty = 2, lwd = 2)
 abline(v = 0, lty = 3)
 lines(dens.500[[4]]$y, log(dens.500[[4]]$x), lwd = 4, col = "grey")
@@ -123,37 +131,18 @@ for(i in 1:3){
   mi = match(max(dens.1k[[i]]$y), dens.1k[[i]]$y)
   text(xpos, log(dens.1k[[i]]$x[mi]), gen[i], pos = 4)
 }
-axis(1)
+axis(3)
 axis(2, at = log(c(300, 500, 1000, 2000, 3000)), labels = c(300, 500, 1000, 2000, 3000))
 box()
 ```
+![](modern_files/images/greenTrad.jpg)
+:::
+  
+  Interesting results. The multi-species distributions are very close to the true values, but for individual species we see pretty strong deviations from the experimental conditions and these don't match the results from the 'traditional' Franks model. My hunch is that this has to do with how the parameter averaging was done, but perhaps also in part reflects the fact that `A` is treated as a free parameter in my model. 
 
-Interesting results. The multi-species distributions are spot on, but for individual species we see pretty strong deviations from the experimental conditions and these don't match the results from the 'traditional' Franks model. In particular, different taxa seem to show differences in 'sensitivity'. **Cedrus** is biased high in the 1000 ppm experiment and low in the 500 ppm experiment. In contrast, **Stenochlaena** shows a small range of posterior estimates with median estimates from the two experiments only ~150 ppm apart.
+### Fixed assimilation
 
-My hunch is that this is due to how we're handing `A` in the forward model. For consistency with other applications, I'm using the reported `A0` and `CiCa0` values as if they were just that, so `A` is calculated from these values and the Franks formulation and is a function of the modeled `ca` value. I contrast, I believe that in the traditional interpretation of these data `A = A0` (no sensitivity to `ca`). Let's look at the posterior estimates of `A` and how they compare with the `A0` values for the two contrasting taxa.
-
-```{r plotA1}
-cols = viridis(2, begin = 0.2, end = 0.8)
-i = 2
-plot(d.green.500.g[[i]]$A0, post.500[[i]]$BUGSoutput$median$A, xlim = c(6, 12),
-     ylim = c(5, 12), xlab = "A0", ylab = "A", pch = 21, cex = 2, bg = cols[1],
-     main = gen[i])
-points(d.green.1k.g[[i]]$A0, post.1k[[i]]$BUGSoutput$median$A, pch = 21, 
-       cex = 2, bg = cols[2])
-abline(0, 1)
-
-i = 3
-plot(d.green.500.g[[i]]$A0, post.500[[i]]$BUGSoutput$median$A, xlim = c(2, 8),
-     ylim = c(2, 8), xlab = "A0", ylab = "A", pch = 21, cex = 2, bg = cols[1],
-     main = gen[i])
-points(d.green.1k.g[[i]]$A0, post.1k[[i]]$BUGSoutput$median$A, pch = 21, 
-       cex = 2, bg = cols[2])
-abline(0, 1)
-```
-
-I may need to do more digging as to the mechanics here, but `A` is collapsing to nearly identical values in the two experiments for **Stenochlaena**, whereas the difference between experimental treatments for `A` is actually larger than that for `A0` for for **Cedrus**. Since the posterior estimates of `ca` and `A` are closely linked that's not too surprising, but this shows that `A` is adjusting in the analysis which accounts for the difference in these results relative to the traditional ones that used a prescribed distribution for `A`.
-
-Can we run an experiment that more closely reflects the traditional interpretations? Here's a version of the model which fixes `A`.
+Let's run a second analysis that fixes the value of `A` for each individual using the `A0` values reported in the dataset.
 
 ```{r}
 # Re-prep the data, keeping reported A values
@@ -172,27 +161,28 @@ for(i in seq_along(gen)){
   data = parseFranks(d.green.500.g.fA[[i]], fixA = TRUE)
   prepMod.fixA(data)
   post.500.fA[[i]] = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
-                       n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
-
+                                   n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
+  
   data = parseFranks(d.green.1k.g.fA[[i]], fixA = TRUE)
   prepMod.fixA(data)
   post.1k.fA[[i]] = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
-                       n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
+                                  n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
 }
 
 data = parseFranks(d.green.500.fA, fixA = TRUE)
 prepMod.fixA(data)
 post.500.fA[[4]] = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
-                       n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
+                                 n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
 
 data = parseFranks(d.green.1k.fA, fixA = TRUE)
 prepMod(data)
 post.1k.fA[[4]] = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
-                       n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
+                                n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
 ```
 
 Plot it.
 
+::: {layout-ncol=2}
 ```{r greenPlotFixA}
 dens.500.fA = dens.1k.fA = list()
 for(i in 1:4){
@@ -200,10 +190,10 @@ for(i in 1:4){
   dens.1k.fA[[i]] = density(post.1k.fA[[i]]$BUGSoutput$sims.list$ca)
 }
 
-par(mar = c(3, 5, 1, 1))
+par(mar = c(1, 5, 3, 1))
 plot(0, 0, type = "n", xlim = c(0.024, 0), ylim = c(log(300), log(3000)), axes = FALSE,
-     xlab = "", ylab = expression("Atmospheric CO"[2]*" (ppm)"))
-abline(h = log(500), lty = 2, lwd = 2)
+     xlab = "", ylab = expression("Atmospheric CO"[2]*" (ppm)"), xaxs = "i", yaxs = "i")
+abline(h = log(500), lty = 2, lwd = 2, col = "grey")
 abline(h = log(1000), lty = 2, lwd = 2)
 abline(v = 0, lty = 3)
 lines(dens.500.fA[[4]]$y, log(dens.500.fA[[4]]$x), lwd = 4, col = "grey")
@@ -217,33 +207,107 @@ for(i in 1:3){
   mi = match(max(dens.1k.fA[[i]]$y), dens.1k.fA[[i]]$y)
   text(xpos, log(dens.1k.fA[[i]]$x[mi]), gen[i], pos = 4)
 }
-axis(1)
+axis(3)
+axis(2, at = log(c(300, 500, 1000, 2000, 3000)), labels = c(300, 500, 1000, 2000, 3000))
+box()
+```
+![](modern_files/images/greenTrad.jpg)
+:::
+  
+  Same patterns but the dispersion between taxa is compressed somewhat and is a better (but not perfect) match to the published interpretations. In particular, by fixing `A` the 500 ppm posterior estimates for *Stenochlaena* and *Cedrus* shift closer to the true value. I haven't dug deeply, but I think this makes sense: 
+
+* When `A` is not fixed, it will increase with increasing `ca`, which reduces the increase in Ci/Ca that occurs as `ca` increases, which means that a larger increase in `ca` is required to produce the same increase in photosynthetic ^13^C discrimination.
+* When `A` is fixed, there's no additional drawdown of `ci` as `ca` increases and the rate of increase in Ci/Ca, and discrimination, as `ca` increases is larger.
+
+The multi-species posteriors here actually deviate from the true values slightly more than in the free-`A` analysis above, which is interesting but the effect is not large. In general, though, the results of the fixed-`A` case support the idea that the differences here, relative to the published results in [Milligan et al. 2019](https://doi.org/10.1029/2018GL081215) are mostly due to differences in how the information is integrated across samples.
+
+### Scaling assimilation
+
+Let's run one final experiment, perhaps a most rigorous test of the method. Here I'll use the full hierarchical model but run all of the data together in a single analysis. For each species, we will use the mean `A0` and `CiCa0` values from the 500 ppm treatment to anchor the assimilation model and let the Franks model predict the assimilation rate at 1000 ppm by scaling from those values. Then we'll do the same but anchor using the 1000 ppm values and scale to 500 ppm. For simplicity, I'll only run the multi-species case. 
+
+```{r greenFull}
+data = parseFranks(rbind(d.green.500, d.green.1k))
+prepMod(data)
+post.green.up = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
+                              n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
+data = parseFranks(rbind(d.green.1k, d.green.500))
+prepMod(data)
+post.green.dn = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
+                              n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
+```
+```{r greenFullPlot}
+par(mar = c(1, 5, 3, 1))
+plot(0, 0, type = "n", xlim = c(0.01, 0), ylim = c(log(300), log(3000)), axes = FALSE,
+     xlab = "", ylab = expression("Atmospheric CO"[2]*" (ppm)"), xaxs = "i", yaxs = "i")
+abline(h = log(500), lty = 2, lwd = 2, col = "grey")
+abline(h = log(1000), lty = 2, lwd = 2)
+
+d.500 = density(post.green.up$BUGSoutput$sims.list$ca[, 1])
+d.1k = density(post.green.up$BUGSoutput$sims.list$ca[, 2])
+lines(d.500$y, log(d.500$x), lwd = 4, col = "grey")
+lines(d.1k$y, log(d.1k$x), lwd = 4)
+
+d.500 = density(post.green.dn$BUGSoutput$sims.list$ca[, 2])
+d.1k = density(post.green.dn$BUGSoutput$sims.list$ca[, 1])
+lines(d.500$y, log(d.500$x), lwd = 4, lty = 2, col = "grey")
+lines(d.1k$y, log(d.1k$x), lwd = 4, lty = 2)
+
+legend("topright", c("500 ppm anchor", "1k ppm anchor"), lty = c(1, 2), lwd = 3)
+
+axis(3)
 axis(2, at = log(c(300, 500, 1000, 2000, 3000)), labels = c(300, 500, 1000, 2000, 3000))
 box()
 ```
 
-Let's take one more look at this, plotting the same comparison but using the posterior values of `A` from the multi-species inversion.
+IMO this is a mixed bag. The differences capture the nature of the experimental forcing. But there's a general tendency for the model-estimated `ca` values to be too high, a compression of the difference in `ca` between treatments, and a sensitivity to which `ca` level we use to anchor the assimilation rate function. 
 
-```{r plotA2}
-i = 2
-si = grep(gen[i], d.green.500$Genus)
-plot(d.green.500.g[[i]]$A0, post.500[[4]]$BUGSoutput$median$A[si], xlim = c(6, 16),
-     ylim = c(5, 12), xlab = "A0", ylab = "A", pch = 21, cex = 2, bg = cols[1],
-     main = gen[i])
-si = grep(gen[i], d.green.1k$Genus)
-points(d.green.1k.g[[i]]$A0, post.1k[[4]]$BUGSoutput$median$A[si], pch = 21, 
-       cex = 2, bg = cols[2])
-abline(0, 1)
+## Field samples
 
-i = 3
-si = grep(gen[i], d.green.500$Genus)
-plot(d.green.500.g[[i]]$A0, post.500[[4]]$BUGSoutput$median$A[si], xlim = c(2, 11),
-     ylim = c(2, 5), , xlab = "A0", ylab = "A", pch = 21, cex = 2, bg = cols[1],
-     main = gen[i])
-si = grep(gen[i], d.green.1k$Genus)
-points(d.green.1k.g[[i]]$A0, post.1k[[4]]$BUGSoutput$median$A[si], pch = 21, 
-       cex = 2, bg = cols[2])
-abline(0, 1)
+We'll run two versions of the analysis for the ~400 ppm field samples. First, the flat analysis with each sample interpreted independently.
+
+```{r fieldIndv}
+data = parseFranks(d.field, condense = FALSE)
+prepMod(data)
+post.indv = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
+                          n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
 ```
 
-Here the expansion/compression of the posterior values of `A` relative to the `A0` is much less drastic, reflecting 
+Second, a hierarchical analysis.
+
+```{r fieldGroup}
+data = parseFranks(d.field)
+prepMod(data)
+post.group = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
+                           n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
+```
+
+Plot it, with Dana's traditional interpretations for single samples and average on the right for comparison.
+
+::: {layout-ncol=2}
+```{r fieldPlot}
+indv.dens = list()
+dmax = 0
+for(i in seq_along(post.indv$BUGSoutput$sims.list$ca[1, ])){
+  indv.dens[[i]] = density(post.indv$BUGSoutput$sims.list$ca[, i])
+  dmax = max(dmax, max(indv.dens[[i]]$y))
+}
+group.dens = density(post.group$BUGSoutput$sims.list$ca)
+dmax = max(dmax, max(group.dens$y))
+
+par(mar = c(4, 5, 1, 1))
+plot(0, 0, type = "n", xlab = expression("Estimated CO"[2]*" (ppm)"),
+     ylab = "Probability", xlim = c(0, 1000), ylim = c(0, dmax * 1.04),
+     las = 1, xaxs = "i", yaxs = "i")
+
+for(i in seq_along(indv.dens)){
+  lines(indv.dens[[i]], col = "forestgreen")
+}
+
+lines(group.dens, lwd = 3, col = "forestgreen")
+
+box()
+```
+![](modern_files/images/modTrad.jpg)
+:::
+
+OK, more confirmation that the greenhouse test was sensitive to the details of the integration across the data set...here we see very close correspondence between the results for the Bayesian inversion and the Monte Carlo sampling of the traditional model. This despite the fact that `A` is treated as a free parameter in my analysis. As we've seen in the applications to Xiaoqing's data the multi-sample posterior is a bit tighter using the hierarchical PSM than what is usually obtained with post-hoc integration of the results from the traditional model, but regardless this looks like pretty strong support for the PSM's performance.

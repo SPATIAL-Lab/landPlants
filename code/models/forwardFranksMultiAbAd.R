@@ -57,14 +57,14 @@ model {
     D.ab[i] = SA.ab[i] / (pi * (Pl.ab[i] / 2) ^ 2)
     D.ad[i] = SA.ad[i] / (pi * (Pl.ad[i] / 2) ^ 2)
     
-    ## Stomatal pore area - this uses fixed GCL/PL scaling of 0.5 for now
+    ## Stomatal pore area
     SA.ab[i] = SA_gc.ab[i] * PL_GCL[i] ^ 2
     SA.ad[i] = SA_gc.ad[i] * PL_GCL[i] ^ 2
     
     SA_gc.ab[i] ~ dbeta(1.5, 20)
     SA_gc.ad[i] ~ dbeta(1.5, 20)
     
-    ## Pore length - this uses fixed GCL/PL scaling of 0.5 for now
+    ## Pore length
     Pl.ab[i] = gcl_m.ab[i] * PL_GCL[i] * 1e-6
     Pl.ad[i] = gcl_m.ad[i] * PL_GCL[i] * 1e-6
     
@@ -120,11 +120,11 @@ model {
     ## Stomatal density
     D[i] = SA[i] / (pi * (Pl[i] / 2) ^ 2)
     
-    ## Stomatal pore area - this uses fixed GCL/PL scaling of 0.5 for now
+    ## Stomatal pore area
     SA[i] = SA_gc[i] * PL_GCL[i] ^ 2
     SA_gc[i] ~ dbeta(1.5, 20)
  
-    ## Pore length - this uses fixed GCL/PL scaling of 0.5 for now
+    ## Pore length
     Pl[i] = gcl_m[i] * PL_GCL[i] * 1e-6
     gcl_m[i] ~ dgamma(2, 0.08)
     
