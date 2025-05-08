@@ -135,7 +135,7 @@ My hunch is that this is due to how we're handing `A` in the forward model. For 
 ```{r plotA1}
 cols = viridis(2, begin = 0.2, end = 0.8)
 i = 2
-plot(d.green.500.g[[i]]$A0, post.500[[i]]$BUGSoutput$median$A, xlim = c(6, 16),
+plot(d.green.500.g[[i]]$A0, post.500[[i]]$BUGSoutput$median$A, xlim = c(6, 12),
      ylim = c(5, 12), xlab = "A0", ylab = "A", pch = 21, cex = 2, bg = cols[1],
      main = gen[i])
 points(d.green.1k.g[[i]]$A0, post.1k[[i]]$BUGSoutput$median$A, pch = 21, 
@@ -143,8 +143,8 @@ points(d.green.1k.g[[i]]$A0, post.1k[[i]]$BUGSoutput$median$A, pch = 21,
 abline(0, 1)
 
 i = 3
-plot(d.green.500.g[[i]]$A0, post.500[[i]]$BUGSoutput$median$A, xlim = c(2, 11),
-     ylim = c(3.4, 4), xlab = "A0", ylab = "A", pch = 21, cex = 2, bg = cols[1],
+plot(d.green.500.g[[i]]$A0, post.500[[i]]$BUGSoutput$median$A, xlim = c(2, 8),
+     ylim = c(2, 8), xlab = "A0", ylab = "A", pch = 21, cex = 2, bg = cols[1],
      main = gen[i])
 points(d.green.1k.g[[i]]$A0, post.1k[[i]]$BUGSoutput$median$A, pch = 21, 
        cex = 2, bg = cols[2])
@@ -156,7 +156,7 @@ I may need to do more digging as to the mechanics here, but `A` is collapsing to
 Can we run an experiment that more closely reflects the traditional interpretations? Here's a version of the model which fixes `A`.
 
 ```{r}
-# Reprep the data, keeping reported A values
+# Re-prep the data, keeping reported A values
 d.fA = read.xlsx("data/stomata-franks_modernTests.xlsx", sheet = 1, startRow = 3)
 d.fA$s3[d$s3 == 1] = mu
 d.green.500.fA = d.fA[d.fA$Stratigraphic.Level == 500,]
@@ -174,14 +174,53 @@ for(i in seq_along(gen)){
   post.500.fA[[i]] = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
                        n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
 
-  data = parseFranks(d.green.1k.g.fA[[i]])
+  data = parseFranks(d.green.1k.g.fA[[i]], fixA = TRUE)
   prepMod.fixA(data)
   post.1k.fA[[i]] = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
                        n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
 }
+
+data = parseFranks(d.green.500.fA, fixA = TRUE)
+prepMod.fixA(data)
+post.500.fA[[4]] = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
+                       n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
+
+data = parseFranks(d.green.1k.fA, fixA = TRUE)
+prepMod(data)
+post.1k.fA[[4]] = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
+                       n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
 ```
 
+Plot it.
 
+```{r greenPlotFixA}
+dens.500.fA = dens.1k.fA = list()
+for(i in 1:4){
+  dens.500.fA[[i]] = density(post.500.fA[[i]]$BUGSoutput$sims.list$ca)
+  dens.1k.fA[[i]] = density(post.1k.fA[[i]]$BUGSoutput$sims.list$ca)
+}
+
+par(mar = c(3, 5, 1, 1))
+plot(0, 0, type = "n", xlim = c(0.024, 0), ylim = c(log(300), log(3000)), axes = FALSE,
+     xlab = "", ylab = expression("Atmospheric CO"[2]*" (ppm)"))
+abline(h = log(500), lty = 2, lwd = 2)
+abline(h = log(1000), lty = 2, lwd = 2)
+abline(v = 0, lty = 3)
+lines(dens.500.fA[[4]]$y, log(dens.500.fA[[4]]$x), lwd = 4, col = "grey")
+lines(dens.1k.fA[[4]]$y, log(dens.1k.fA[[4]]$x), lwd = 4)
+xpos = par("usr")[1] + 0.05 * diff(par("usr")[1:2])
+for(i in 1:3){
+  lines(dens.500.fA[[i]]$y, log(dens.500.fA[[i]]$x), lwd = 2, col = "grey")
+  mi = match(max(dens.500.fA[[i]]$y), dens.500.fA[[i]]$y)
+  text(xpos, log(dens.500.fA[[i]]$x[mi]), gen[i], pos = 4, col = "grey")
+  lines(dens.1k.fA[[i]]$y, log(dens.1k.fA[[i]]$x), lwd = 2)
+  mi = match(max(dens.1k.fA[[i]]$y), dens.1k.fA[[i]]$y)
+  text(xpos, log(dens.1k.fA[[i]]$x[mi]), gen[i], pos = 4)
+}
+axis(1)
+axis(2, at = log(c(300, 500, 1000, 2000, 3000)), labels = c(300, 500, 1000, 2000, 3000))
+box()
+```
 
 Let's take one more look at this, plotting the same comparison but using the posterior values of `A` from the multi-species inversion.
 

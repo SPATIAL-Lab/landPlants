@@ -37,10 +37,14 @@ parseFranks = function(d, condense = TRUE, fixA = FALSE){
   }
   
   # Fixed parameters
-  c.names = c("CO2_0", "b", "gamma")
+  c.names = c("CO2_0", "b", "gamma", "PL_GCL")
   for(i in seq_along(c.names)){
     ci = match(c.names[i], names(d))
-    d.sub = d[, ci]
+    if(is.na(ci) & c.names[i] == "PL_GCL"){
+      d.sum = rep(0.5, nrow(d))
+    } else{
+      d.sub = d[, ci]
+    }
     data[[i + 16]] = d.sub
   }
   
