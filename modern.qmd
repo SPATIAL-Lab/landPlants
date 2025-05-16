@@ -214,7 +214,7 @@ box()
 ![](modern_files/images/greenTrad.jpg)
 :::
   
-  Same patterns but the dispersion between taxa is compressed somewhat and is a better (but not perfect) match to the published interpretations. In particular, by fixing `A` the 500 ppm posterior estimates for *Stenochlaena* and *Cedrus* shift closer to the true value. I haven't dug deeply, but I think this makes sense: 
+Same patterns but the dispersion between taxa is compressed somewhat and is a better (but not perfect) match to the published interpretations. In particular, by fixing `A` the 500 ppm posterior estimates for *Stenochlaena* and *Cedrus* shift closer to the true value. I haven't dug deeply, but I think this makes sense: 
 
 * When `A` is not fixed, it will increase with increasing `ca`, which reduces the increase in Ci/Ca that occurs as `ca` increases, which means that a larger increase in `ca` is required to produce the same increase in photosynthetic ^13^C discrimination.
 * When `A` is fixed, there's no additional drawdown of `ci` as `ca` increases and the rate of increase in Ci/Ca, and discrimination, as `ca` increases is larger.

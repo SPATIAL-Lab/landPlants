@@ -144,3 +144,65 @@ prepMod.fixA = function(data){
   # Write
   writeLines(mod, file.path(tempdir(), "model.txt"))
 }
+
+
+parseStan = function(d, condense = TRUE, fixA = FALSE){
+  # Parse values from sheet, obs, parameters, constants
+  
+  # Drop aggregate estimate rows based on missing stomatal density
+  d = d[!is.na(d$Dab), ]
+  
+  data = list()
+  
+  # Data obs 
+  data.names = c("d13Cp", "Dab", "GCLab", "GCWab", "Dad", "GCLad", "GCWad")
+  data.sd = c(0.2, 1.5e5, 3e-7, 1.5e-7, 1.5e5, 3e-7, 1.5e-7)
+  
+  for(i in seq_along(data.names)){
+    ci = match(data.names[i], names(d))
+    d.sub = d[, ci:(ci + 1)]
+    d.sub[is.na(d.sub[, 2]), 2] = data.sd[i]
+    d.sub[d.sub[, 2] == 0, 2] = data.sd[i]
+    data[[i]] = as.numeric(d.sub[1, ])
+  }
+  
+  # Free parameters
+  mp.names = c("d13Ca", "A0", "CiCa0", "gb", "s1", "s2", "s3",
+               "s4", "s5")
+  mp.sd = c(0.5, 0.25, 0.05, 0.05, 0.001, 0.05, 0.01, 0.01, 0.001)
+  
+  for(i in seq_along(mp.names)){
+    ci = match(mp.names[i], names(d))
+    d.sub = d[, ci:(ci + 1)]
+    d.sub[is.na(d.sub[, 2]), 2] = mp.sd[i]
+    if(mp.names[i] == "s1"){
+      # Special case if Pl is measured directly 
+      d.sub[d.sub[, 2] == 0, 2] = 0.001
+    } else{
+      d.sub[d.sub[, 2] == 0, 2] = mp.sd[i]
+    }
+    data[[i + 7]] = as.numeric(d.sub[1, ])
+  }
+  
+  # Fixed parameters
+  c.names = c("CO2_0", "b", "gamma", "PL_GCL")
+  for(i in seq_along(c.names)){
+    ci = match(c.names[i], names(d))
+    if(is.na(ci) & c.names[i] == "PL_GCL"){
+      d.sum = rep(0.5, nrow(d))
+    } else{
+      d.sub = d[, ci]
+    }
+    data[[i + 16]] = d.sub
+  }
+  
+  c.names[3] = "gam"
+  names(data) = c(data.names, mp.names, c.names)
+  
+  # Transform CiCa0
+  data$Ci0 = data$CiCa0 * data$CO2_0
+  names(data$Ci0) = c("Ci0", "eCi0")
+  data = data[!(names(data) %in% c("CiCa0", "CO2_0"))]
+  
+  return(data)
+}

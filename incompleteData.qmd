@@ -36,10 +36,8 @@ parms = c("Pl", "l", "amax.scale", "D", "gc.scale", "ca", "meso.scale",
 Invert the full PSM using the test samples. These tests all use a version of the model that is parameterized in terms of `SA` and `GCL`, where the priors on these values are fit to the data from the Beerling and Franks compilation. These are scaled using a fixed `Pl/GCL` of 0.5 and used to calculate `D`.
 
 ```{r control}
-system.time({
-  control = jags.parallel(data, inits, parms, file.path(tempdir(), "fullFranks.txt"), 
+control = jags.parallel(data, inits, parms, file.path(tempdir(), "fullFranks.txt"), 
                           n.chains = 4, n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)
-})
 ```
 
 I notice that the reported uncertainty in $\delta^{13}C_{p}$ values in the template is quite low...0.01 permil. I'm not sure where that comes from, but IMHO it's not a realistic estimate of the precision with which a measurement of the fossil leaf tissue reflects the $\delta^{13}C$ of photosynthate produced by the ancient plant. Let's compare the control result to that obtained using a somewhat more realistic 1 $\sigma$ value of 0.3 permil for all samples. \symbol{"2030}
@@ -48,10 +46,8 @@ I notice that the reported uncertainty in $\delta^{13}C_{p}$ values in the templ
 data.sd = data
 data.sd$d13Cp[, 2] = rep(0.3)
 
-system.time({
-  realSD = jags.parallel(data.sd, inits, parms, file.path(tempdir(), "fullFranks.txt"), 
+realSD = jags.parallel(data.sd, inits, parms, file.path(tempdir(), "fullFranks.txt"), 
                           n.chains = 4, n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)
-})
 ```
 
 First, the posterior distributions are better sampled in this case:
@@ -95,7 +91,7 @@ A few nuances aside (and those most likely due to the poorer sampling for some m
 
 ## Stomatal density
 
-To represent the case where we have data only on stomatal density, let's set the $\delta^{13}C_p$ values to some generic distribution. I'll use a fixed mean value for all samples that's 19 permil less than the mean estimate for $\delta^{13}C_a$, and apply a 1 $\sigma$ value of 4 per mil (we could pick a different value...probably work looking at various compilations for C3 plants). We'll run this using a version of the model that does not consider the GCL and GCW data, and I'll keep the same number of posterior samples so we can compare apples to apples.
+To represent the case where we have only stomatal density data, let's set the $\delta^{13}C_p$ values to some generic distribution. I'll use a fixed mean value for all samples that's 19 permil less than the mean estimate for $\delta^{13}C_a$, and apply a 1 $\sigma$ value of 4 per mil (we could pick a different value...probably work looking at various compilations for C3 plants). We'll run this using a version of the model that does not consider the GCL and GCW data, and I'll keep the same number of posterior samples so we can compare apples to apples.
 
 ```{r stomata}
 data.stomata = data
@@ -106,11 +102,8 @@ data.stomata$d13Cp[, 2] = rep(4)
 data.stomata = data.stomata[names(data.stomata) != "GCLab"]
 data.stomata = data.stomata[names(data.stomata) != "GCWab"]
 
-system.time({
-  stomata = jags.parallel(data.stomata, inits, parms, file.path(tempdir(), "DonlyFranks.txt"), 
+stomata = jags.parallel(data.stomata, inits, parms, file.path(tempdir(), "DonlyFranks.txt"), 
                           n.chains = 4, n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)
-})
-
 ```
 
 I won't show it, but the posterior is very well sampled here. Let's compare ca with what we got using the 'real' standard deviation values above.
@@ -147,11 +140,8 @@ data.d13C = data.d13C[names(data.d13C) != "Dab"]
 data.d13C = data.d13C[names(data.d13C) != "GCLab"]
 data.d13C = data.d13C[names(data.d13C) != "GCWab"]
 
-system.time({
-  d13C = jags.parallel(data.d13C, inits, parms, file.path(tempdir(), "d13ConlyFranks.txt"), 
+d13C = jags.parallel(data.d13C, inits, parms, file.path(tempdir(), "d13ConlyFranks.txt"), 
                           n.chains = 4, n.iter = 2e6, n.burnin = 1e4, n.thin = 1e3)
-})
-
 ```
 
 Also very good sampling of the posterior, not shown.

@@ -78,7 +78,7 @@ model {
   # Locality priors ----
   for(i in 1:length(d13Ca[, 1])){
     ca[i] = ca.s[i] * 1e3
-    ca.s[i] ~ dunif(0.1, 8)
+    ca.s[i] ~ dunif(0.5, 8)
     d13Ca_m[i] ~ dnorm(d13Ca[i, 1], 1 / d13Ca[i, 2] ^ 2)
   }
   
