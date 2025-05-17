@@ -1,7 +1,9 @@
 ---
-title: "incompleteData"
+title: "Incomplete data tests"
 format: html
 editor: source
+execute: 
+  cache: true
 ---
 
 ## Setup
@@ -10,6 +12,7 @@ Load packages and functions and export model versions for use.
 
 ```{r setup}
 #| output: false
+#| cache: false
 library(R2jags)
 library(openxlsx)
 library(viridisLite)

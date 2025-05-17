@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>cretaceous</title>
+<title>Cretaceous paleoflora tests</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -77,7 +77,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <main class="content" id="quarto-document-content">
 
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Cretaceous paleoflora tests</h1>
+</div>
 
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
 
 
 <section id="setup" class="level2">
@@ -91,7 +107,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>parms <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Pl"</span>, <span class="st">"l"</span>, <span class="st">"amax.scale"</span>, <span class="st">"D"</span>, <span class="st">"gc.scale"</span>, <span class="st">"ca"</span>, <span class="st">"meso.scale"</span>,</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>          <span class="st">"Ci0_m"</span>, <span class="st">"A0_m"</span>, <span class="st">"d13Ca_m"</span>, <span class="st">"A"</span>, <span class="st">"D13C"</span>, <span class="st">"gcop"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Load data.</p>
+<p>Load data, from <a href="https://doi.org/10.1002/ajb2.16376">Zhang et al.&nbsp;(2024)</a>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">=</span> <span class="fu">read.xlsx</span>(<span class="st">"data/stomata-franks_zhang_2024_P1.0.xlsx"</span>, <span class="at">sheet =</span> <span class="dv">1</span>, <span class="at">startRow =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -122,7 +138,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="cretaceous_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="384"></p>
+<p><img src="cretaceous_files/figure-html/validation-1.png" class="img-fluid figure-img" width="384"></p>
 </figure>
 </div>
 </div>
@@ -165,7 +181,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="cretaceous_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="384"></p>
+<p><img src="cretaceous_files/figure-html/byLevel-1.png" class="img-fluid figure-img" width="384"></p>
 </figure>
 </div>
 </div>

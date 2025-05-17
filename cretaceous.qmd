@@ -1,8 +1,11 @@
 ---
+title: "Cretaceous paleoflora tests"
 format: html
 editor: source
 fig-width: 4
 fig-height: 4
+execute: 
+  cache: true
 ---
 
 ## Setup
@@ -19,7 +22,7 @@ parms = c("Pl", "l", "amax.scale", "D", "gc.scale", "ca", "meso.scale",
           "Ci0_m", "A0_m", "d13Ca_m", "A", "D13C", "gcop")
 ```
 
-Load data.
+Load data, from [Zhang et al. (2024)](https://doi.org/10.1002/ajb2.16376).
 
 ```{r data}
 d = read.xlsx("data/stomata-franks_zhang_2024_P1.0.xlsx", sheet = 1, startRow = 3)
@@ -46,7 +49,7 @@ post.cl = jags.parallel(data, inits, parms, "code/models/forwardFranksMulti.R",
 
 The results of the first (individual) analysis can be compared directly with the results of the 'traditional' application of the Franks model (as reported in Xiaoqing's paper and the CO~2~PIP data sheet). One would expect the results to be pretty similar, since we are using the same model structure and prior assumptions about parameter values in the PSM as were applied in the traditional analysis.
 
-```{r}
+```{r validation}
 plot(d$CO2_ppm[-(1:3)], post$BUGSoutput$median$ca, pch = 21, bg = "grey50",
      cex = 2, lwd = 2, ylab = "Median ca from PSM", 
      xlab = "Median ca traditional")
@@ -58,8 +61,7 @@ points(d$CO2_ppm[-(1:3)], post$BUGSoutput$median$ca, pch = 21, bg = "grey50",
 
 It's maybe more interesting to look at the results of the hierarchical model, which correspond more closely to how we would apply the PSM in practice. Here, the model structure provides a mechanistically-based framework for aggregating information from multiple samples, eliminating the need to subjective post-hoc aggregation of results from multiple leaves. Given that the model structure is different, we wouldn't necessarily expect identical results from the traditional and PSM-based analyses.
 
-```{r}
-
+```{r byLevel}
 library(viridisLite)
 cols = viridis(3)
 

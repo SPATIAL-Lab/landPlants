@@ -4,6 +4,8 @@ format: html
 editor: source
 fig-width: 4
 fig-height: 4
+execute: 
+  cache: true
 ---
 
 ## Setup
@@ -58,11 +60,67 @@ d.green.1k = d[d$Stratigraphic.Level == 1000,]
 d.field = d[d$Stratigraphic.Level == 400,]
 ```
 
+
+## Field samples
+
+We'll run two versions of the analysis for the ~400 ppm field samples. First, a flat analysis with each sample interpreted independently. The model is running using `A0` and `CiCa0` as the anchor points for the Franks equations to calculate `A`, so assimilation is a free parameter and varies with `ca`. 
+
+```{r fieldIndv}
+data = parseFranks(d.field, condense = FALSE)
+prepMod(data)
+post.indv = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
+                          n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
+```
+
+Second, a hierarchical analysis, structured as such:
+
+![](cretaceous_files/images/structure.png)
+
+Using the hierarchical model, a single posterior sample is obtained for the stratigraphic level (here all of the samples are assumed to come from a single 'strat level') and species level parameters, and these apply to all individual samples of that species in that experimental treatment.
+
+```{r fieldGroup}
+data = parseFranks(d.field)
+prepMod(data)
+post.group = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
+                           n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
+```
+
+Plot it, with Dana's traditional interpretations for single samples and average on the right for comparison.
+
+::: {layout-ncol=2}
+```{r fieldPlot}
+indv.dens = list()
+dmax = 0
+for(i in seq_along(post.indv$BUGSoutput$sims.list$ca[1, ])){
+  indv.dens[[i]] = density(post.indv$BUGSoutput$sims.list$ca[, i])
+  dmax = max(dmax, max(indv.dens[[i]]$y))
+}
+group.dens = density(post.group$BUGSoutput$sims.list$ca)
+dmax = max(dmax, max(group.dens$y))
+
+par(mar = c(4, 5, 1, 1))
+plot(0, 0, type = "n", xlab = expression("Estimated CO"[2]*" (ppm)"),
+     ylab = "Probability", xlim = c(0, 1000), ylim = c(0, dmax * 1.04),
+     las = 1, xaxs = "i", yaxs = "i")
+
+for(i in seq_along(indv.dens)){
+  lines(indv.dens[[i]], col = "forestgreen")
+}
+
+lines(group.dens, lwd = 3, col = "forestgreen")
+
+box()
+```
+![](modern_files/images/modTrad.jpg)
+:::
+
+OK, we see very close correspondence between the results for the Bayesian inversion and the Monte Carlo sampling of the traditional model. This despite the fact that `A` is treated as a free parameter in my analysis (but I believe was fixed in the traditional analysis). The multi-sample posterior is a bit tighter using the hierarchical PSM than that obtained with post-hoc integration of the results from the traditional model, but regardless this looks like pretty strong support for the PSM's performance.
+
 ## Greenhouse experiments
 
 ### Per treatment
 
-First we will work with the greenhouse data and run separate inversions for each species. Prep these subsets.
+Now let's work with the greenhouse data and run separate inversions for each species. Prep these subsets.
 
 ```{r green}
 gen = unique(d.green.500$Genus)
@@ -73,7 +131,7 @@ for(i in seq_along(gen)){
 }
 ```
 
-Now run the inversions. This is the exact same model used for Xiaoqing's data with the exception of added math to propagate the conductivity for adaxial species where needed. The model is running using `A0` and `CiCa0` as the anchor points for the Franks equations for `A`, so assimilation is a free parameter and varies with `ca`. We are using the hierarchical model, so a single posterior sample is obtained for the site- (here equal to experimental treatment) and species-level parameters, and these apply to all individual samples of that species in that experimental treatment.
+Now run the inversions.
 
 ```{r byGenus}
 post.500 = post.1k = list()
@@ -138,7 +196,7 @@ box()
 ![](modern_files/images/greenTrad.jpg)
 :::
   
-  Interesting results. The multi-species distributions are very close to the true values, but for individual species we see pretty strong deviations from the experimental conditions and these don't match the results from the 'traditional' Franks model. My hunch is that this has to do with how the parameter averaging was done, but perhaps also in part reflects the fact that `A` is treated as a free parameter in my model. 
+Interesting results. The multi-species distributions are very close to the true values, but for individual species we see pretty strong deviations from the experimental conditions and these don't match the results from the 'traditional' Franks model. My hunch is that this has to do with how the parameter averaging was done, but perhaps also in part reflects the fact that `A` is treated as a free parameter in my model. 
 
 ### Fixed assimilation
 
@@ -214,7 +272,7 @@ box()
 ![](modern_files/images/greenTrad.jpg)
 :::
   
-Same patterns but the dispersion between taxa is compressed somewhat and is a better (but not perfect) match to the published interpretations. In particular, by fixing `A` the 500 ppm posterior estimates for *Stenochlaena* and *Cedrus* shift closer to the true value. I haven't dug deeply, but I think this makes sense: 
+We see the same patterns but the dispersion between taxa is compressed somewhat and is a better (but not perfect) match to the published interpretations. In particular, by fixing `A` the 500 ppm posterior estimates for *Stenochlaena* and *Cedrus* shift closer to the true value. I haven't dug deeply, but I think this makes sense: 
 
 * When `A` is not fixed, it will increase with increasing `ca`, which reduces the increase in Ci/Ca that occurs as `ca` increases, which means that a larger increase in `ca` is required to produce the same increase in photosynthetic ^13^C discrimination.
 * When `A` is fixed, there's no additional drawdown of `ci` as `ca` increases and the rate of increase in Ci/Ca, and discrimination, as `ca` increases is larger.
@@ -260,54 +318,3 @@ box()
 ```
 
 IMO this is a mixed bag. The differences capture the nature of the experimental forcing. But there's a general tendency for the model-estimated `ca` values to be too high, a compression of the difference in `ca` between treatments, and a sensitivity to which `ca` level we use to anchor the assimilation rate function. 
-
-## Field samples
-
-We'll run two versions of the analysis for the ~400 ppm field samples. First, the flat analysis with each sample interpreted independently.
-
-```{r fieldIndv}
-data = parseFranks(d.field, condense = FALSE)
-prepMod(data)
-post.indv = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
-                          n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
-```
-
-Second, a hierarchical analysis.
-
-```{r fieldGroup}
-data = parseFranks(d.field)
-prepMod(data)
-post.group = jags.parallel(data, inits, parms, file.path(tempdir(), "model.txt"), 
-                           n.chains = 3, n.iter = 5e4, n.burnin = 1e4)
-```
-
-Plot it, with Dana's traditional interpretations for single samples and average on the right for comparison.
-
-::: {layout-ncol=2}
-```{r fieldPlot}
-indv.dens = list()
-dmax = 0
-for(i in seq_along(post.indv$BUGSoutput$sims.list$ca[1, ])){
-  indv.dens[[i]] = density(post.indv$BUGSoutput$sims.list$ca[, i])
-  dmax = max(dmax, max(indv.dens[[i]]$y))
-}
-group.dens = density(post.group$BUGSoutput$sims.list$ca)
-dmax = max(dmax, max(group.dens$y))
-
-par(mar = c(4, 5, 1, 1))
-plot(0, 0, type = "n", xlab = expression("Estimated CO"[2]*" (ppm)"),
-     ylab = "Probability", xlim = c(0, 1000), ylim = c(0, dmax * 1.04),
-     las = 1, xaxs = "i", yaxs = "i")
-
-for(i in seq_along(indv.dens)){
-  lines(indv.dens[[i]], col = "forestgreen")
-}
-
-lines(group.dens, lwd = 3, col = "forestgreen")
-
-box()
-```
-![](modern_files/images/modTrad.jpg)
-:::
-
-OK, more confirmation that the greenhouse test was sensitive to the details of the integration across the data set...here we see very close correspondence between the results for the Bayesian inversion and the Monte Carlo sampling of the traditional model. This despite the fact that `A` is treated as a free parameter in my analysis. As we've seen in the applications to Xiaoqing's data the multi-sample posterior is a bit tighter using the hierarchical PSM than what is usually obtained with post-hoc integration of the results from the traditional model, but regardless this looks like pretty strong support for the PSM's performance.
